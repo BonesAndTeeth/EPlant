@@ -3,12 +3,13 @@ angular.module("plantApp")
 	$scope.test = "haha";
 	$scope.WebGLNotDetected = false;
 
+    //Show error message if the user's browser does not support webGL
 	if ( ! Detector.webgl ) {
 		$scope.WebGLNotDetected = true;
 	}
 
 	var container, camera, scene, renderer;
-    var tree, treeContainer
+    var tree, treeContainer;
     var treeTexture, branchMaterial;
 
 	try{
