@@ -1,22 +1,22 @@
 /**
- * @author inear
+ *  based on http://inear.se/three_tree/
  * 
  */
-var leafTexture = THREE.ImageUtils.loadTexture( "images/leaf.png" );
+var leafTexture = THREE.ImageUtils.loadTexture( "leaf.png" );
 var leafGeometry = new THREE.Plane( 20, 20,1, 1 );
 var leafMaterial = new THREE.MeshBasicMaterial( { opacity:0.95, map: leafTexture, blending: THREE.NormalBlending, depthTest: true, transparent : true} );
 
-
-var PI2 = Math.PI * 2
 var TO_RADIANS = Math.PI / 180;
 var numSide = 10;
-var numBlock = 7;
+var numBlock = 10;
 
 var MAX_LEVEL = 3;
 
 
-Tree = function ( materials, level, radius, maxScale ) {
+Tree = function ( materials, level, radius, maxScale, dir) {
 	THREE.Mesh.call( this, new THREE.Geometry(), materials );
+
+	this.dir = dir;
 	
 	this.level = level;
 	this.doubleSided = false;
@@ -48,7 +48,7 @@ Tree = function ( materials, level, radius, maxScale ) {
 		
 		height = 30*scope.maxScale;
 		
-		radiusStep = scope.radius / numBlock;
+		radiusStep = scope.radius / (numBlock+1);
 		//reset
 		basePoint = new THREE.Vector3(0,0,0);
 		
@@ -62,7 +62,7 @@ Tree = function ( materials, level, radius, maxScale ) {
 			
 			branchPoint.translateZ(height);
 			
-			branchPoint.rotation.y += 6 * TO_RADIANS;
+			branchPoint.rotation.y += 3*(scope.level) * TO_RADIANS;
 			
 			var diffVector = new THREE.Vector3();
 			diffVector.sub( branchPoint.position, basePoint)
@@ -83,29 +83,33 @@ Tree = function ( materials, level, radius, maxScale ) {
 
 			branchPoint.updateMatrix();
 
-			if(level < MAX_LEVEL && currBlock==4){
-				var leftBranch = new Tree(scope.materials, scope.level+1, scope.radius*0.95, scope.maxScale*0.95);
-				leftBranch.position = branchPoint.position.clone();
-				leftBranch.rotation = branchPoint.rotation.clone();
-				leftBranch.rotation.z += 120*TO_RADIANS;
-				scope.addChild(leftBranch);
-				var rightBranch = new Tree(scope.materials, scope.level+1, scope.radius*0.95, scope.maxScale*0.95);
-				rightBranch.position = branchPoint.position.clone();
-				rightBranch.rotation = branchPoint.rotation.clone();
-				rightBranch.rotation.z -=100*TO_RADIANS;
-				scope.addChild(rightBranch);
+			if(level < MAX_LEVEL && currBlock==4 || (level==0 && currBlock==3)){
+				var k=0;
+				numBranch = Math.random()*3+2;
+				for(; k<numBranch; k++){
+					dir = (scope.dir==null)?(k>1):!(scope.dir);
+					newBranch = new Tree(scope.materials, scope.level+1, scope.radius*0.95, scope.maxScale*0.9,dir);
+					newBranch.position = branchPoint.position.clone();
+					newBranch.rotation = branchPoint.rotation.clone();
+					angle = Math.random()*250*TO_RADIANS;
+					
+					if(newBranch.dir)
+						newBranch.rotation.z += angle;
+					else
+						newBranch.rotation.z -= angle;
+					scope.addChild(newBranch);
+				}
 
 			}
 				
-			if( currBlock >= 5 && level >1) {
-				
+			if( currBlock >= 6 && level >1) {
 				for( i=0; i<2; i++ ) {
 					var leaf = new THREE.Mesh( leafGeometry, leafMaterial );
 					leaf.doubleSided = true
 					leaf.position = branchPoint.position.clone();
-					leaf.position.x += Math.random()*50-25
-					leaf.position.y += Math.random()*50-25
-					leaf.position.z += Math.random()*50-25
+					leaf.position.x += Math.random()*10
+					leaf.position.y += Math.random()*10
+					leaf.position.z += Math.random()*10
 					leaf.rotation = branchPoint.rotation.clone();
 					leaf.rotation.x = 90 * TO_RADIANS;
 					leaf.rotation.y = Math.random()*90 * TO_RADIANS
@@ -131,10 +135,9 @@ Tree = function ( materials, level, radius, maxScale ) {
 				var faceVertexUvs = scope.geometry.faceVertexUvs
 				
 				angle = Math.PI * 2 / numSide;
-				
 
 				var radius = scope.radius;
-				console.log(scope.radius);
+
 				
 				currSide = 0;
 				while (currSide < numSide)
@@ -158,34 +161,24 @@ Tree = function ( materials, level, radius, maxScale ) {
 				{
 					
 					if ( currSide < (numSide - 1)) {
-						//second floor
 						p1 = vertices.length - numSide + currSide + 1;
 						p4 = vertices.length - numSide + currSide ;
-						
-						//first floor
 						p2 = vertices.length - numSide * 2 + currSide + 1;
 						p3 = vertices.length - numSide * 2 + currSide;
 					}
 					else {
-						//last side - connected to first point in ring
-						//second floor
 						p1 = vertices.length - numSide;
 						p4 = vertices.length - numSide + currSide;
-						
 						p2 = vertices.length - numSide * 2;
 						p3 = vertices.length - numSide * 2 + currSide;
 					}	
-
-
 					faces.push( new THREE.Face4( p1, p2, p3, p4  ) );
-
-					var maxHeight = height*(scope.branchOffset+1);
 					
 					var startX = 1/numSide*(currSide+1);
 					var endX = startX - 1/numSide;
 					
-					var startY = currBlock/scope.branchOffset*3;
-					var endY = startY + 1/scope.branchOffset*3
+					var startY = currBlock/numBlock*3;
+					var endY = startY + 1/numBlock*3
 					
 					faceVertexUvs[ 0 ].push([
 						new THREE.UV( startX, endY),
