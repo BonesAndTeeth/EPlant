@@ -2,7 +2,7 @@
  *  based on http://inear.se/three_tree/
  * 
  */
-var leafTexture = THREE.ImageUtils.loadTexture( "leaf.png" );
+var leafTexture = THREE.ImageUtils.loadTexture( "images/leaf.png" );
 var leafGeometry = new THREE.Plane( 20, 20,1, 1 );
 var leafMaterial = new THREE.MeshBasicMaterial( { opacity:0.95, map: leafTexture, blending: THREE.NormalBlending, depthTest: true, transparent : true} );
 

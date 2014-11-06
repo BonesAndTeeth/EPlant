@@ -46,7 +46,7 @@ angular.module("plantApp")
         scene.addLight( light );
       
         //create texture from image 
-        var treeTexture = THREE.ImageUtils.loadTexture( "treebark.jpg" );
+        var treeTexture = THREE.ImageUtils.loadTexture( "images/treebark.jpg" );
         treeTexture.minFilter = THREE.LinearFilter;
         treeTexture.magFilter = THREE.LinearFilter;
         treeTexture.wrapS = treeTexture.wrapT = THREE.RepeatWrapping
@@ -67,7 +67,7 @@ angular.module("plantApp")
         
         //set up renderer
         renderer = new THREE.WebGLRenderer( { clearColor:0xaaccff, clearAlpha: 1, antialias: true, sortObjects :false} );
-        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setSize( window.innerWidth-17, window.innerHeight-90 );
 
         container.innerHTML = "";
         container.appendChild( renderer.domElement );
