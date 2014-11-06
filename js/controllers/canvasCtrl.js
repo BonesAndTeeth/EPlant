@@ -1,3 +1,7 @@
+/**
+ *  based on http://inear.se/three_tree/
+ * 
+ */
 angular.module("plantApp")
 .controller("canvasCtrl",function($scope){
 	$scope.test = "haha";

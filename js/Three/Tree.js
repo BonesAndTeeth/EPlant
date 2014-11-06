@@ -2,17 +2,34 @@
  *  based on http://inear.se/three_tree/
  * 
  */
+
+//leaf texture from image
 var leafTexture = THREE.ImageUtils.loadTexture( "images/leaf.png" );
 var leafGeometry = new THREE.Plane( 20, 20,1, 1 );
 var leafMaterial = new THREE.MeshBasicMaterial( { opacity:0.95, map: leafTexture, blending: THREE.NormalBlending, depthTest: true, transparent : true} );
 
+//convert degree to radian
 var TO_RADIANS = Math.PI / 180;
+
+//number of sides in tree branches
 var numSide = 10;
+
+/*
+number of blocks
+each branch is made up of blocks stacked 
+on top of one another
+*/
 var numBlock = 10;
 
+
+//maximum brach level of tree
 var MAX_LEVEL = 3;
 
-
+//constructor
+//materials: branch texture
+//level: current level of branch
+//radius: base radius
+//dir: branch direction
 Tree = function ( materials, level, radius, maxScale, dir) {
 	THREE.Mesh.call( this, new THREE.Geometry(), materials );
 
@@ -26,6 +43,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 
 	if( this.radius < 0.5 ) this.radius = .5
 	
+	//generate webGL geometry
 	build( this )
 	
 	this.geometry.computeFaceNormals();
@@ -46,53 +64,53 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 
 		branchPoint = new THREE.Object3D();
 		
+		//height of each block
 		height = 30*scope.maxScale;
 		
 		radiusStep = scope.radius / (numBlock+1);
-		//reset
+
 		basePoint = new THREE.Vector3(0,0,0);
 		
-		//for each step
 		while (currBlock < numBlock)
 		{
-			//last point
 			basePoint.x = branchPoint.position.x;
 			basePoint.y = branchPoint.position.y;
 			basePoint.z = branchPoint.position.z;
 			
 			branchPoint.translateZ(height);
 			
+			//spread out the branches
 			branchPoint.rotation.y += 3*(scope.level) * TO_RADIANS;
 			
+			//compute local coordinate system for the branch
 			var diffVector = new THREE.Vector3();
 			diffVector.sub( branchPoint.position, basePoint)
-
 			var transformPoint = new THREE.Vector3()
 			transformPoint.add(diffVector, new THREE.Vector3(10, 0, 0));
-
 			R = new THREE.Vector3()
 			R.cross(transformPoint, diffVector);
-
 			S = new THREE.Vector3()
 			S.cross(R, diffVector);
-
 			R.normalize();
 			S.normalize();
 
+			//generate vertices and faces for current block
 			drawBlock( currBlock == 0  );
 
 			branchPoint.updateMatrix();
 
+			//recursively create child branches on current branch 
 			if(level < MAX_LEVEL && currBlock==4 || (level==0 && currBlock==3)){
 				var k=0;
+				//random number of branches
 				numBranch = Math.random()*3+2;
 				for(; k<numBranch; k++){
+					//dir used to balance left and right 
 					dir = (scope.dir==null)?(k>1):!(scope.dir);
 					newBranch = new Tree(scope.materials, scope.level+1, scope.radius*0.95, scope.maxScale*0.9,dir);
 					newBranch.position = branchPoint.position.clone();
 					newBranch.rotation = branchPoint.rotation.clone();
 					angle = Math.random()*250*TO_RADIANS;
-					
 					if(newBranch.dir)
 						newBranch.rotation.z += angle;
 					else
@@ -102,6 +120,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 
 			}
 				
+			//append leaves on the tip of branches of last level
 			if( currBlock >= 6 && level >1) {
 				for( i=0; i<2; i++ ) {
 					var leaf = new THREE.Mesh( leafGeometry, leafMaterial );
@@ -138,7 +157,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 
 				var radius = scope.radius;
 
-				
+				//compute vertex coordinates on each cross section of the current block				
 				currSide = 0;
 				while (currSide < numSide)
 				{
@@ -156,6 +175,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 				if ( bottom ) 
 					return;
 
+				//link vertices to form faces in the two cross sections below
 				currSide = 0;
 				while (currSide < numSide)
 				{
@@ -174,6 +194,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 					}	
 					faces.push( new THREE.Face4( p1, p2, p3, p4  ) );
 					
+					//compute texture coordinates
 					var startX = 1/numSide*(currSide+1);
 					var endX = startX - 1/numSide;
 					
@@ -195,7 +216,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 	
 };
 
-
+//inherits from mesh object
 Tree.prototype = new THREE.Mesh();
 Tree.prototype.constructor = Tree;
 Tree.prototype.supr = THREE.Mesh.prototype;
