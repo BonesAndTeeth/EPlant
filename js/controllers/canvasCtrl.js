@@ -71,7 +71,7 @@ angular.module("plantApp")
         
         //set up renderer
         renderer = new THREE.WebGLRenderer( { clearColor:0xaaccff, clearAlpha: 1, antialias: true, sortObjects :false} );
-        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setSize( window.innerWidth-17, window.innerHeight-90 );
 
         container.innerHTML = "";
         container.appendChild( renderer.domElement );
