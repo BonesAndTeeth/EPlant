@@ -46,7 +46,7 @@ angular.module("plantApp")
         scene.addLight( light );
       
         //create texture from image 
-        var treeTexture = THREE.ImageUtils.loadTexture( "treebark.jpg" );
+        var treeTexture = THREE.ImageUtils.loadTexture( "images/treebark.jpg" );
         treeTexture.minFilter = THREE.LinearFilter;
         treeTexture.magFilter = THREE.LinearFilter;
         treeTexture.wrapS = treeTexture.wrapT = THREE.RepeatWrapping
