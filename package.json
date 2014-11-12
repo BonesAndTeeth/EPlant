@@ -1,0 +1,19 @@
+{
+  "name": "EPlant",
+  "version": "0.0.0",
+  "description": "This webapp is about plant petting :D",
+  "main": "index.js",
+  "scripts": {
+    "test": "run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BonesAndTeeth/EPlant"
+  },
+  "author": "Yilin Dong, Violet Xue Zou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BonesAndTeeth/EPlant/issues"
+  },
+  "homepage": "https://github.com/BonesAndTeeth/EPlant"
+}

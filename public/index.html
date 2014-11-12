@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="plantApp">
+
+<head>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/lib/semantic.min.css">
+  <script type="text/javascript" src="js/lib/semantic.min.js"></script>
+  <script type="text/javascript" src="js/lib/three.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0/angular.js"></script>
+  <script type="text/javascript" src="js/lib/angular-route.min.js"></script>
+
+  <script type="text/javascript" src="js/services/questionService.js"></script>
+  <script type="text/javascript" src="js/app.js"></script>
+  <script type="text/javascript" src="js/controllers/canvasCtrl.js"></script>
+  <script type="text/javascript" src="js/directives/plantCanvas.js"></script>
+
+  <script type="text/javascript" src="js/Three/Tween.js"></script>
+  <script type="text/javascript" src="js/Three/Three.js"></script>
+  <script type="text/javascript" src="js/Three/Tree.js"></script>
+  <script type="text/javascript" src="js/Three/Detector.js"></script>
+  <script type="text/javascript" src="js/Three/RequestAnimationFrame.js"></script>
+  <script type="text/javascript" src="js/Three/Stats.js"></script>
+
+  <link rel="stylesheet" href="css/plantApp.css">
+
+</head>
+
+<body ng-controller="AppCtrl">
+  <div class="ui inverted page grid masthead segment">
+    <div class="column">
+      <div class="inverted secondary pointing ui menu">
+        <div class="header item">E-Plant</div>
+        <div class="right menu">
+          <div class="item">Log in</div>
+          <div class="item">Contact</div>
+          <div class="item">Community</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <plant-canvas></plant-canvas>
+  <questionnaire></questionnaire>
+</body>
+
+</html>
