@@ -1,7 +1,11 @@
 <div>
 	<div>
-		question: {{question}}
-		<br>
+		question: 
+		<div>{{question}}</div>
+		<div ng-show="type=='TwoEquations'">{{question2}}</div>
+	</div>
+
+	<div>
 		answer: {{answer}} 
 	</div>
 </div>
