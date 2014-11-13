@@ -6,3 +6,6 @@ angular.module('questionServices', ['ngResource'])
 	return $resource('/qaTwoEquations');
 });
 
+.factory('doMath', function  ($resource) {
+	return $resource('/doMath');
+});
