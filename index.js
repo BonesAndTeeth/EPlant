@@ -18,10 +18,8 @@ app.get('/qaFactoringTrinomials', function  (req, res) {
               $('[name="Button1"]').click();
               $('[name="Button"]').click();
               var data = {
-                "organized": {
-                  "question": $('[name="output1"]').val(),
-                  "answer": $('[name="output6"]').val()
-                }
+                "question": $('[name="output1"]').val(),
+                "answer": $('[name="output6"]').val()
               };
               return data;
             }, function(data) {
