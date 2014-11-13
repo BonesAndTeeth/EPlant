@@ -99,7 +99,6 @@ angular.module("plantApp")
         renderer.render(scene, camera);
       }
       
-      
       function resizeHandler(){
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
