@@ -15,16 +15,14 @@ app.get('/qaFactoringTrinomials', function  (req, res) {
           "http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js",
           function() {
             page.evaluate(function() {
+              $('[name="Button1"]').click();
+              $('[name="Button"]').click();
               var data = {
-                // question: $('[name="output1"]').val(),
-                // answer:   $('[name="output6"]').val()
-                question: $('[name="Button1"]').val(),
-                answer:   $('[name="Button"]').val()
+                "organized": {
+                  "question": $('[name="output1"]').val(),
+                  "answer": $('[name="output6"]').val()
+                }
               };
-              // var data = {
-              //   q:"la",
-              //   a:"en"
-              // };
               return data;
             }, function(data) {
               ph.exit();
