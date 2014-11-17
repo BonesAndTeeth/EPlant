@@ -33,10 +33,8 @@ angular.module("plantApp")
 		if($scope.problem!=null && $scope.solution!=null){
 			var solution = $scope.solution;
 			var answer = $scope.problem.answer;
-			solution =solution.replace(/ /g,"");
-			answer =answer.replace(/ |\s+/g,"");
-			console.log(answer);
-			console.log(solution);
+			solution =solution.toString().replace(/ |\s+/g,"");
+			answer =answer.toString().replace(/ |\s+/g,"");
 			if(solution == answer)
 				$scope.reply="correct";
 			else

@@ -22,7 +22,7 @@ app.get('/problems/1', function  (req, res) {
               $('[name="Button1"]').click();
               $('[name="Button"]').click();
               var data = {
-                "equation1": $('[name="output11"]').val(),
+                "question": $('[name="output11"]').val(),
                 "equation2": $('[name="output22"]').val(),
                 "answer": $('[name="output10"]').val(),
               };
