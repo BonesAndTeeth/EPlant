@@ -1,11 +1,27 @@
 <div>
-	<div>
+	<select ng-model="type">
+		<option value=0 selected="selected">Factor</option>
+		<option value=1>Linear Equations</option>
+		<option value=2>Calculation</option>
+		<option value=3>Word Problem</option>
+	</select>
+	<button ng-click="getquestion()">get</button>
+
+	<div ng-show="showquestion==true">
 		question: 
 		<div>{{question}}</div>
-		<div ng-show="type=='TwoEquations'">{{question2}}</div>
+		<div>{{question2}}</div>
 	</div>
-
-	<div>
-		answer: {{answer}} 
+	<div ng-show="showbar==true" ><img src='images/ajax-loader.gif'/></div>
+	<div ng-show="showbutton==true">
+		<input ng-model="solution" type='text'></input>
+		<button ng-click="postsolution()">submit</button>
+		<button ng-click="getanswer()">getAnswer</button>
+		<div>{{reply}}</div>
 	</div>
+	<div ng-show="showanswer==true">
+		answer: 
+		<div>{{answer}}</div> 
+	</div>
+	
 </div>

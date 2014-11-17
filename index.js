@@ -11,7 +11,7 @@ var urlWord2 = "?js=0&nb=1&hd=1";
 var app = express();
 app.use(express.static('public'));
 
-app.get('/qaTwoEquations', function  (req, res) {
+app.get('/problems/1', function  (req, res) {
   phantom.create(function (ph) {
     ph.createPage(function (page) {
       page.open(urlTwoEquations, function (status) {
@@ -37,7 +37,7 @@ app.get('/qaTwoEquations', function  (req, res) {
   });
 });
 
-app.get('/doMath', function  (req, res) {
+app.get('/problems/2', function  (req, res) {
   phantom.create(function (ph) {
     ph.createPage(function (page) {
       page.open(urlMath, function (status) {
@@ -45,7 +45,7 @@ app.get('/doMath', function  (req, res) {
           "http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js",
           function() {
             page.evaluate(function() {
-              var data = {"question":{}, "answer":{}};
+              var data = {};
               var type = Math.floor(Math.random()*5+1); // random type 
               var operators = ['','/','*','+','-','% of'];
 
@@ -57,31 +57,29 @@ app.get('/doMath', function  (req, res) {
               
               var qadiv = $("#theDisplay")
               var qawrapper = qadiv.children('table').eq(1).children('tbody').eq(0).children('tr').eq(0);
-
-              qawrapper.children('td').each(function(qid){
-
-                var qatable = $(this).children('table').eq(0);
+              var qnum = Math.floor(Math.random()*5);
+              var qatd = qawrapper.children('td').eq(qnum)
+                var qatable = qatd.children('table').eq(0);
                 if(type>=2 && type<=4){
                   var op0 = qatable.find('td').eq(0).html();
                   var op1 = qatable.find('td').eq(1).html().replace(/x|\s+/g,""); // strip operator and space
                   var answer = qatable.find('td').eq(2).html();
-                  data['question'][qid] = op0+""+operators[type]+op1;
+                  data['question'] = op0+""+operators[type]+op1;
                 } // + - *
 
                 else if(type == 1){
                   var op0 = qatable.find('td').eq(3).html();
                   var op1 = qatable.find('td').eq(2).html();
                   var answer = qatable.find('td').eq(1).html();
-                  data['question'][qid] = op0+""+operators[type]+op1;
+                  data['question'] = op0+""+operators[type]+op1;
                 } // division
 
                 else{
                   var question= qatable.find('td').eq(0).html();
                   var answer = qatable.find('td').eq(1).html().substring(3); // strip operator
-                  data['question'][qid] = question;
+                  data['question'] = question;
                 } // percentage
-                data['answer'][qid] = Number(answer);
-              });
+                data['answer'] = Number(answer);
               return data;
             }, function(data) {
               ph.exit();
@@ -93,7 +91,7 @@ app.get('/doMath', function  (req, res) {
   });
 });
 
-app.get('/qaFactoringTrinomials', function  (req, res) {
+app.get('/problems/0', function  (req, res) {
   phantom.create(function (ph) {
     ph.createPage(function (page) {
       page.open(urlFactoringTrinomials, function (status) {
@@ -118,10 +116,11 @@ app.get('/qaFactoringTrinomials', function  (req, res) {
   });
 });
 
-app.get('/qaWordQuestion', function  (req, res) {
+app.get('/problems/3', function  (req, res) {
   phantom.create(function (ph) {
     ph.createPage(function (page) {
-      page.open(urlWord + Math.floor(1000000*Math.random()) + urlWord2, function (status) {
+      url = urlWord + Math.floor(1000000*Math.random()) + urlWord2;
+      page.open(url, function (status) {
         page.includeJs(
           "http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js",
           function() {
@@ -143,8 +142,7 @@ app.get('/qaWordQuestion', function  (req, res) {
               ph.exit();
               res.json(data);
             });
-          }
-        );
+          });
       });
     });
   });
