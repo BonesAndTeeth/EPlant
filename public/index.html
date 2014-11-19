@@ -10,6 +10,9 @@
   <script type="text/javascript" src="js/lib/angular-route.min.js"></script>
   <script type="text/javascript" src="js/lib/angular-resource.min.js"></script>
 
+  <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/0.9.0/angularfire.min.js"></script>
+
   <script type="text/javascript" src="js/app.js"></script>
   <script type="text/javascript" src="js/services/questionServices.js"></script>
   <script type="text/javascript" src="js/controllers/canvasCtrl.js"></script>
@@ -34,7 +37,9 @@
       <div class="inverted secondary pointing ui menu">
         <div class="header item">E-Plant</div>
         <div class="right menu">
-          <div class="item">Log in</div>
+          <div class="item" ng-click="loginmodal()" ng-hide="loggedIn">Log in</div>
+          <div class="item" ng-show="loggedIn">Hi, {{usr.username}}</div>
+          <div class="item" ng-click="logout()" ng-show="loggedIn">Log out</div>
           <div class="item">Contact</div>
           <div class="item">Community</div>
         </div>
@@ -43,6 +48,60 @@
   </div> 
   <questionnaire></questionnaire> 
   <plant-canvas></plant-canvas>
+
+  <!---------------------------------------------------------------------------------->
+  <!-----------------------------login/logout/sign up--------------------------------->
+  <!-----------------------Snippet selected from past projects------------------------>
+  <!---------------------------------------------------------------------------------->
+
+  <div class="ui basic modal">
+    <div class="ui two column middle aligned relaxed grid basic segment">
+      <div class="column">
+        <div class="ui fluid form segment">
+          <div class="field">
+            <input placeholder="Email" type="text" ng-model="loginEmail">
+          </div>
+          <div class="field">
+            <input placeholder="Password" type="password" ng-model="loginPassword">
+          </div>
+          <div class="center aligned column">
+            <div class="mini ui action blue button" ng-click="userLogin(loginEmail, loginPassword, false)">login</div>
+          </div>
+        </div>
+      </div>
+      <div class="ui vertical divider" id="or" style="color:rgb(190,208,247)">
+       &nbsp;&nbsp;&nbsp;Or&nbsp;&nbsp;&nbsp;
+      </div>
+      <div class="center aligned column">
+        <div class="big red ui button" ng-click="signupmodal();">
+          Sign Up
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui signup small modal">
+    <div class="column">
+      <div class="ui fluid form segment">
+        <div class="field">
+          <input placeholder="Username" type="text" ng-model="Username">
+        </div>
+        <div class="field">
+          <input placeholder="Email" type="text" ng-model="Email">
+        </div>
+        <div class="field">
+          <input placeholder="Password" type="password" ng-model="PasswordFirst">
+        </div>
+        <div class="field">
+          <input placeholder="Confirm Password" type="password" ng-model="PasswordConfirm">
+        </div>
+        <div class="center aligned column">
+          <div class="ui red small action button" ng-click="userSignup()">Join!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>

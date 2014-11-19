@@ -1,12 +1,14 @@
 var express = require('express'),
 http = require('http'),
-phantom = require('phantom');
+phantom = require('phantom'),
+Firebase = require("firebase");
 
 var urlFactoringTrinomials = "http://coolmath.com/crunchers/algebra-problems-factoring-trinomials-0.htm";
 var urlTwoEquations = "http://coolmath.com/crunchers/algebra-problems-systems-equations-2x2.htm";
 var urlMath = "http://www.tom-muck.com/math.html";
 var urlWord = "http://www.mathfactcafe.com/worksheet/wordproblem/1/1/m/5/18/";
 var urlWord2 = "?js=0&nb=1&hd=1";
+var firebaseSync = new Firebase('https://eplant.firebaseio.com/');
 
 var app = express();
 app.use(express.static('public'));
