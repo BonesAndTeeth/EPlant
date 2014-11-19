@@ -1,39 +1,44 @@
 angular.module("plantApp")
-.controller("questionnaireCtrl",function($scope, QA, QATwoEquations, doMath, QAWord){
-	
-	$scope.type = "Word";
-	QAdata = {};
-	getQA($scope.type);
+.controller("questionnaireCtrl",function($scope, QA){
+	$scope.showquestion = false;
+	$scope.type = 0;
+	$scope.getquestion = function(){
+		typeOfQ = $scope.type
+		$scope.showanswer = false;
+		$scope.showquestion = false;
+		$scope.showbutton = false;
+		$scope.showbar = true;
+		$scope.problem = null;
+		$scope.solution = null;
+		$scope.reply = null;
+		QA.get({id : typeOfQ}).$promise.then(function(data){
+			$scope.problem = data
+			$scope.question = data.question;
+			$scope.question2 = data.equation2;
+			$scope.answer = data.answer;
+			$scope.showbutton = true;
+			$scope.showquestion = true;
+			$scope.showbar = false;
+		});		
+	}
+	$scope.getanswer = function(){
+		if($scope.problem!=null){
+			$scope.answer = $scope.problem.answer;
+			$scope.showanswer = true;
+			$scope.showbutton = false;
+		}
+	}
 
-	function getQA(typeOfQ){
-		if (typeOfQ == "TwoEquations"){
-			QATwoEquations.get().$promise.then(function(data){
-				$scope.question = data.equation1;
-				$scope.question2 = data.equation2;
-				$scope.answer = data.answer;
-				QAdata = data;
-			});	
-		}
-		else if(typeOfQ == "FactoringTrinomial"){
-			QA.get().$promise.then(function(data){
-				$scope.question = data.question;
-				$scope.answer = data.answer;
-				QAdata = data;
-			});	
-		}
-		else if(typeOfQ == "doMath"){
-			doMath.get().$promise.then(function(data){
-				$scope.question = data.question;
-				$scope.answer = data.answer;
-				QAdata = data;
-			});	
-		}
-		else if(typeOfQ == "Word"){
-			QAWord.get().$promise.then(function(data){
-				$scope.question = data.question;
-				$scope.answer = data.answer;
-				QAdata = data;
-			});	
+	$scope.postsolution = function(){
+		if($scope.problem!=null && $scope.solution!=null){
+			var solution = $scope.solution;
+			var answer = $scope.problem.answer;
+			solution =solution.toString().replace(/ |\s+/g,"");
+			answer =answer.toString().replace(/ |\s+/g,"");
+			if(solution == answer)
+				$scope.reply="correct";
+			else
+				$scope.reply="wrong";
 		}
 	}
 	
