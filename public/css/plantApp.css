@@ -1,0 +1,17 @@
+#selectproblem {
+z-index: 2;
+margin: 30px auto auto 30px;
+position: absolute;
+}
+.qtitle{
+	color: #666;
+}
+plant-canvas {
+z-index: 1;
+position: fixed;
+margin-top: 0px;
+}
+.modalbuttons {
+padding: 1rem 2rem;
+float: right ;
+}

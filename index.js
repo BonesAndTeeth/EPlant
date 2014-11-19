@@ -24,6 +24,7 @@ app.get('/problems/1', function  (req, res) {
               $('[name="Button1"]').click();
               $('[name="Button"]').click();
               var data = {
+                "qtitle": "Linear Equations",
                 "question": $('[name="output11"]').val(),
                 "equation2": $('[name="output22"]').val(),
                 "answer": $('[name="output10"]').val(),
@@ -47,7 +48,7 @@ app.get('/problems/2', function  (req, res) {
           "http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js",
           function() {
             page.evaluate(function() {
-              var data = {};
+              var data = {"qtitle": "Calculation"};
               var type = Math.floor(Math.random()*5+1); // random type 
               var operators = ['','/','*','+','-','% of'];
 
@@ -104,6 +105,7 @@ app.get('/problems/0', function  (req, res) {
               $('[name="Button1"]').click();
               $('[name="Button"]').click();
               var data = {
+                "qtitle": "Factorization",
                 "question": $('[name="output1"]').val(),
                 "answer": $('[name="output6"]').val()
               };
@@ -128,6 +130,7 @@ app.get('/problems/3', function  (req, res) {
           function() {
             page.evaluate(function() {
               var data = {
+                "qtitle": "Word Problem",
                 "question": $('#MainContent_lvProblems_lblQuestion_0').text(),
                 "answer": $('#MainContent_lvProblems_lblAnswer_0').text(),
                 "question1": $('#MainContent_lvProblems_lblQuestion_1').text(),
