@@ -1,27 +1,65 @@
-<div>
-	<select ng-model="type">
-		<option value=0 selected="selected">Factorization</option>
-		<option value=1>Linear Equations</option>
-		<option value=2>Calculation</option>
-		<option value=3>Word Problem</option>
-	</select>
-	<button ng-click="getquestion()">getProblem</button>
-
-	<div ng-show="showquestion==true">
-		question: 
-		<div>{{question}}</div>
-		<div>{{question2}}</div>
-	</div>
-	<div ng-show="showbar==true" ><img src='images/ajax-loader.gif'/></div>
-	<div ng-show="showbutton==true">
-		<input ng-model="solution" type='text'></input>
-		<button ng-click="postsolution()">submit</button>
-		<button ng-click="getanswer()">getAnswer</button>
-		<div>{{reply}}</div>
-	</div>
-	<div ng-show="showanswer==true">
-		answer: 
-		<div>{{answer}}</div> 
-	</div>
-	
+<div id="content">
+	<div class="ui black buttons">
+  <div class="ui button">Select a Problem</div>
+  <div class="ui black floating dropdown icon button">
+    <i id="selecticon" class="dropdown icon"></i>
+  	<div class="menu">
+    	<div class="item" ng-click="getquestion(0)">Factorization</div>
+    	<div class="item" ng-click="getquestion(1)">Linear Equations</div>
+    	<div class="item" ng-click="getquestion(2)">Calculation</div>
+    	<div class="item" ng-click="getquestion(3)">Word Problem</div>
+  	 </div>
+  </div>
 </div>
+	<span ng-show="showbar==true" class="ui active inline mini loader"></span>
+</div>
+
+<div class="ui modal" id="qaform">
+  <i class="close icon"></i>
+  <div class="header qtitle">
+    {{qtitle}}
+  </div>
+  <div class="content">
+  	<div class="ui icon message">
+  		<i class="question icon"></i>
+  			<div class="content">
+    			<div class="header">
+      			Problem
+    			</div>
+    			<div>{{question}}</div>
+					<div>{{question2}}</div>
+  		</div>
+		</div>
+    <div class="ui fluid left icon input" ng-show="showanswer==false">
+  		<input ng-model="solution" type="text" placeholder={{placeholder}}>
+    	<i class="edit icon"></i>
+		</div>
+
+    <div id="reply" ng-show="showanswer==false">
+    	<i id="replyicon"></i>
+  		<div class="content">
+    		{{reply}}
+  		</div>
+		</div>
+    <div class="ui icon message" ng-show="showanswer==true">
+  		<i class="exclamation icon"></i>
+  			<div class="content">
+    			<div class="header">
+      			Answer
+    			</div>
+    			<div>{{answer}}</div>
+  		</div>
+		</div>
+  </div>
+  <div class="ui buttons modalbuttons">
+    <div class="ui black button" id="submitbtn" ng-click="postsolution()">
+      Submit
+    </div>
+    <div class="or"></div>
+    <div class="ui black button" ng-click="getanswer()">
+      Get Answer
+    </div>
+
+  </div>
+</div>
+	
