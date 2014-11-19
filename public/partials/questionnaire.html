@@ -1,17 +1,16 @@
 <div id="selectproblem">
 	<div class="ui black buttons">
-  <div class="ui button">Select a Problem</div>
-  <div class="ui black floating dropdown icon button">
-    <i id="selecticon" class="dropdown icon"></i>
-  	<div class="menu">
-    	<div class="item" ng-click="getquestion(0)">Factorization</div>
-    	<div class="item" ng-click="getquestion(1)">Linear Equations</div>
-    	<div class="item" ng-click="getquestion(2)">Calculation</div>
-    	<div class="item" ng-click="getquestion(3)">Word Problem</div>
-  	 </div>
-  </div>
-</div>
-	<span ng-show="showbar==true" class="ui active inline mini loader"></span>
+  	<div class="ui button">Select a Problem</div>
+  	<div class="ui black floating dropdown icon button">
+    	<i id="selecticon" class="dropdown icon"></i>
+  		<div class="menu">
+    		<div class="item" ng-click="getquestion(0)">Factorization</div>
+    		<div class="item" ng-click="getquestion(1)">Linear Equations</div>
+    		<div class="item" ng-click="getquestion(2)">Calculation</div>
+    		<div class="item" ng-click="getquestion(3)">Word Problem</div>
+  		</div>
+  	</div>
+	</div>
 </div>
 
 <div class="ui modal" id="qaform">
@@ -30,18 +29,18 @@
 					<div>{{question2}}</div>
   		</div>
 		</div>
-    <div class="ui fluid left icon input" ng-show="showanswer==false">
+    <div class="ui fluid left icon input" ng-show="!showanswer">
   		<input ng-model="solution" type="text" placeholder={{placeholder}}>
     	<i class="edit icon"></i>
 		</div>
 
-    <div id="reply" ng-show="showanswer==false">
+    <div id="reply" ng-show="!showanswer">
     	<i id="replyicon"></i>
   		<div class="content">
     		{{reply}}
   		</div>
 		</div>
-    <div class="ui icon message" ng-show="showanswer==true">
+    <div class="ui icon message" ng-show="showanswer">
   		<i class="exclamation icon"></i>
   			<div class="content">
     			<div class="header">
@@ -52,11 +51,11 @@
 		</div>
   </div>
   <div class="ui buttons modalbuttons">
-    <div class="ui black button" id="submitbtn" ng-click="postsolution()">
+    <div class="ui black button" id="submitbtn" ng-click="postsolution()" ng-disabled="disablebtn">
       Submit
     </div>
     <div class="or"></div>
-    <div class="ui black button" ng-click="getanswer()">
+    <div class="ui black button" id="answerbtn" ng-click="getanswer()">
       Get Answer
     </div>
 

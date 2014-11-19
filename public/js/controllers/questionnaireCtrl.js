@@ -1,18 +1,15 @@
 angular.module("plantApp")
 .controller("questionnaireCtrl",function($scope, QA){
-	$scope.showquestion = false;
-	var submitbtn = angular.element("#submitbtn");
 	var msg=angular.element("#reply");
 	var msgicon=angular.element("#replyicon");
 	var selecticon=angular.element("#selecticon");
 	angular.element('.ui.dropdown').dropdown();
 
 	$scope.getquestion = function(typeOfQ){
-		submitbtn.removeClass("disabled");
-		selecticon.removeClass("dropdown icon");
-		selecticon.addClass("loading icon");
+		selecticon.attr("class","loading icon");
 		msg.attr("class","");
 	  msgicon.attr("class","");
+	  $scope.disablebtn = false;
 		$scope.showanswer = false;
 		$scope.problem = null;
 		$scope.solution = null;
@@ -23,8 +20,7 @@ angular.module("plantApp")
 			$scope.question = data.question;
 			$scope.question2 = data.equation2;
 			$scope.answer = data.answer;
-			selecticon.removeClass("loading icon");
-			selecticon.addClass("dropdown icon");
+			selecticon.attr("class","dropdown icon");
 			$scope.placeholder="Please enter your answer here"
 			if(typeOfQ==1)
 				$scope.placeholder="Please enter your answer in the format of (x,y)";
@@ -36,30 +32,26 @@ angular.module("plantApp")
 		if($scope.problem!=null){
 			$scope.answer = $scope.problem.answer;
 			$scope.showanswer = true;
-			submitbtn.addClass("disabled");
+			$scope.disablebtn=true;
 		}
 	}
 
 	$scope.postsolution = function(){
-		if($scope.problem!=null && $scope.solution!=null){
+		if($scope.problem!=null && $scope.solution!=null && !$scope.disablebtn){
 			var solution = $scope.solution;
 			var answer = $scope.problem.answer;
 			solution =solution.toString().replace(/ |\s+/g,"");
 			answer =answer.toString().replace(/ |\s+/g,"");
 			if(solution == answer){
 				$scope.reply="Correct";
-				msg.removeClass("ui icon error message");
-				msg.addClass("ui icon success message");
-				msgicon.removeClass("frown icon");
-				msgicon.addClass("smile icon");
-				submitbtn.addClass("disabled");
+				msg.attr("class","ui icon success message");
+				msgicon.attr("class","smile icon");
+				$scope.disablebtn = true;
 			}
 			else{
 				$scope.reply="Incorrect";
-				msg.removeClass("ui icon success message");
-				msg.addClass("ui icon error message");
-				msgicon.removeClass("smile icon");
-				msgicon.addClass("frown icon");
+				msg.attr("class","ui icon error message");
+				msgicon.attr("class","frown icon");
 			}
 		}
 	}
