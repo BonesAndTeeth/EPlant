@@ -90,8 +90,8 @@ angular.module("plantApp")
 		/* convert answer/solution string into valid js math expressions */
 		solution =solution.replace(")(",")*(");
 		answer =answer.replace(")(",")*(");
-		solution = solution.replace(/(\d+)(x)/g,"$1*$2");
-		answer =answer.replace(/(\d+)(x)/g,"$1*$2");
+		solution = solution.replace(/(\d+|\))(x)/g,"$1*$2");
+		answer =answer.replace(/(\d+|\))(x)/g,"$1*$2");
 
 		/* plug in different values 0,1,2 for x and check if expressions evaluate to same number */
 		/* this can be proved... */
