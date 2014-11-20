@@ -93,7 +93,7 @@ angular.module("plantApp")
 		solution = solution.replace(/(\d+|\))(x)/g,"$1*$2");
 		answer =answer.replace(/(\d+|\))(x)/g,"$1*$2");
 
-		/* plug in different values 0,1,2 for x and check if expressions evaluate to same number */
+		/* plug in values 0,1,2 for x and check if expressions evaluate to same number */
 		/* this can be proved... */
 		for(x=0;x<3;x++){
 			if(eval(solution)!=eval(answer))
