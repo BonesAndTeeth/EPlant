@@ -82,7 +82,7 @@ angular.module("plantApp")
 				setTimeout(function(){
 					form.modal('hide');
 					answerservice.sendanswerevent();
-				},3000);
+				},2000);
 			}
 			else{
 				$scope.reply="Incorrect";
