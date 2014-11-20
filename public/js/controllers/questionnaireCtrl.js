@@ -77,6 +77,8 @@ angular.module("plantApp")
 				msg.attr("class","ui icon success message");
 				msgicon.attr("class","smile icon");
 				$scope.disablebtn = true;
+
+				/* closes form and broadcasts event for correct answer */
 				setTimeout(function(){
 					form.modal('hide');
 					answerservice.sendanswerevent();

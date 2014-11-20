@@ -15,6 +15,7 @@ angular.module("plantApp")
     var tree, treeContainer;
     var treeTexture, branchMaterial;
 
+    /* animates leaves on receival of correct answer */
     $scope.$on('answerevent',function(){
         $scope.animateleaf();
     });
