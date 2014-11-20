@@ -63,7 +63,7 @@ angular.module("plantApp")
 				yvalsol = solution.split(/[\(\),]+/)[2];
 				yvalans = answer.split(/[\(\),]+/)[2];
 
-				if((eval(xvalans)!=eval(xvalsol))||(eval(xvalans)!=eval(xvalsol)))
+				if((eval(xvalans)!=eval(xvalsol))||(eval(yvalans)!=eval(yvalsol)))
 					result=false;
 				else result=true;
 
