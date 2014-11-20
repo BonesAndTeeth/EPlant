@@ -37,15 +37,17 @@
       <div class="inverted secondary pointing ui menu">
         <div class="header item">E-Plant</div>
         <div class="right menu">
-          <div class="item" ng-click="loginmodal()" ng-hide="loggedIn">Log in</div>
-          <div class="item" ng-show="loggedIn">Hi, {{usr.username}}</div>
-          <div class="item" ng-click="logout()" ng-show="loggedIn">Log out</div>
+          <div class="item" ng-click="loginmodal()" ng-hide="loggedIn" id="loginB">Log in</div>
+          <div class="item" ng-show="loggedIn" id="loggedInItem">Hi, {{usr.username}}</div>
+          <div class="item" ng-click="logout()" ng-show="loggedIn" id="logoutB">Log out</div>
           <div class="item">Contact</div>
           <div class="item">Community</div>
         </div>
       </div>
     </div>
   </div> 
+
+  
   <questionnaire></questionnaire> 
   <plant-canvas></plant-canvas>
 
@@ -54,18 +56,18 @@
   <!-----------------------Snippet selected from past projects------------------------>
   <!---------------------------------------------------------------------------------->
 
-  <div class="ui basic modal">
+  <div class="ui basic modal" id="loginModal">
     <div class="ui two column middle aligned relaxed grid basic segment">
       <div class="column">
         <div class="ui fluid form segment">
-          <div class="field">
-            <input placeholder="Email" type="text" ng-model="loginEmail">
+          <div class="field" id="loginEmailField">
+            <input placeholder="Email" type="text" ng-model="loginEmail" name="loginEmail">
           </div>
-          <div class="field">
-            <input placeholder="Password" type="password" ng-model="loginPassword">
+          <div class="field" id="loginPasswordField">
+            <input placeholder="Password" type="password" ng-model="loginPassword" name="loginPassword">
           </div>
           <div class="center aligned column">
-            <div class="mini ui action blue button" ng-click="userLogin(loginEmail, loginPassword, false)">login</div>
+            <div class="mini ui action blue button" ng-click="userLogin(loginEmail, loginPassword, false)" id ="loginClickButton">login</div>
           </div>
         </div>
       </div>
@@ -73,30 +75,30 @@
        &nbsp;&nbsp;&nbsp;Or&nbsp;&nbsp;&nbsp;
       </div>
       <div class="center aligned column">
-        <div class="big red ui button" ng-click="signupmodal();">
+        <div class="big red ui button" ng-click="signupmodal();" id="signUpB">
           Sign Up
         </div>
       </div>
     </div>
   </div>
 
-  <div class="ui signup small modal">
+  <div class="ui signup small modal" id="signUpModal">
     <div class="column">
       <div class="ui fluid form segment">
-        <div class="field">
-          <input placeholder="Username" type="text" ng-model="Username">
+        <div class="field" id="UsernameField">
+          <input placeholder="Username" type="text" ng-model="Username" name="Username">
         </div>
-        <div class="field">
-          <input placeholder="Email" type="text" ng-model="Email">
+        <div class="field" id="EmailField">
+          <input placeholder="Email" type="text" ng-model="Email" name="Email">
         </div>
-        <div class="field">
-          <input placeholder="Password" type="password" ng-model="PasswordFirst">
+        <div class="field" id="PasswordFirstField">
+          <input placeholder="Password" type="password" ng-model="PasswordFirst" name="PasswordFirst">
         </div>
-        <div class="field">
-          <input placeholder="Confirm Password" type="password" ng-model="PasswordConfirm">
+        <div class="field" id="PasswordConfirmField">
+          <input placeholder="Confirm Password" type="password" ng-model="PasswordConfirm" name="PasswordConfirm">
         </div>
         <div class="center aligned column">
-          <div class="ui red small action button" ng-click="userSignup()">Join!</div>
+          <div class="ui red small action button" ng-click="userSignup()" id="joinB">Join!</div>
         </div>
       </div>
     </div>
