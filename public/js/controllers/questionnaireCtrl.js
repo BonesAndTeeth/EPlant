@@ -1,9 +1,10 @@
 angular.module("plantApp")
-.controller("questionnaireCtrl",function($scope, QA){
+.controller("questionnaireCtrl",function($scope, QA, answerservice){
 	var msg=angular.element("#reply");
 	var msgicon=angular.element("#replyicon");
 	var selecticon=angular.element("#selecticon");
 	var type=5;
+	var form = angular.element("#qaform");
 	angular.element('.ui.dropdown').dropdown();
 
 	$scope.getquestion = function(typeOfQ){
@@ -26,7 +27,6 @@ angular.module("plantApp")
 			$scope.placeholder="Please enter your answer here"
 			if(typeOfQ==1)
 				$scope.placeholder="Please enter your answer in the format of (x,y)";
-			var form = angular.element("#qaform");
 			form.modal('show');
 		});		
 	}
@@ -77,6 +77,10 @@ angular.module("plantApp")
 				msg.attr("class","ui icon success message");
 				msgicon.attr("class","smile icon");
 				$scope.disablebtn = true;
+				setTimeout(function(){
+					form.modal('hide');
+					answerservice.sendanswerevent();
+				},3000);
 			}
 			else{
 				$scope.reply="Incorrect";
