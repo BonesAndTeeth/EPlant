@@ -133,7 +133,23 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 					leaf.rotation.x = 90 * TO_RADIANS;
 					leaf.rotation.y = Math.random()*90 * TO_RADIANS
 					leaf.rotation.z = Math.random()*90 * TO_RADIANS;
+					
+
+        	var curr = leaf.rotation;
+        	var bppos = branchPoint.position
+        	leaf.move= new TWEEN.Tween(leaf.rotation)
+        		.to({x:curr.x+60*TO_RADIANS,y:curr.y+30*Math.random()*TO_RADIANS,z:curr.z+30*Math.random()*TO_RADIANS}, Math.random()*200+100)
+        		.easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+        	leaf.move2= new TWEEN.Tween(leaf.rotation)
+        		.to({x:curr.x+Math.random()*50*TO_RADIANS,y:curr.y, z:curr.z}, Math.random()*300+100)
+        		.easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+					        		
 					scope.addChild( leaf );
+
+					leaf.move.chain(leaf.move2);
+					leaf.move2.chain(leaf.move);
+					//leaf.move.start();
+					
 					
 				}
 				

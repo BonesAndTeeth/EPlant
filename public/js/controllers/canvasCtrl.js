@@ -3,10 +3,9 @@
  * 
  */
 angular.module("plantApp")
-.controller("canvasCtrl",function($scope){
+.controller("canvasCtrl",function($scope, answerservice){
 	$scope.test = "haha";
 	$scope.WebGLNotDetected = false;
-
     //Show error message if the user's browser does not support webGL
 	if ( ! Detector.webgl ) {
 		$scope.WebGLNotDetected = true;
@@ -15,6 +14,11 @@ angular.module("plantApp")
 	var container, camera, scene, renderer;
     var tree, treeContainer;
     var treeTexture, branchMaterial;
+
+    /* animates leaves on receival of correct answer */
+    $scope.$on('answerevent',function(){
+        $scope.animateleaf();
+    });
 
 	try{
 		init();
@@ -60,6 +64,7 @@ angular.module("plantApp")
         
         //create tree object and add object to the scene
         tree = new Tree(branchMaterial, 0 , 35, 1, null);
+        $scope.tree = tree;
         tree.position = new THREE.Vector3(0,50,0)
         tree.rotation.x = -90 * Math.PI / 180;
         tree.rotation.z = -90 * Math.PI / 180;
@@ -69,7 +74,6 @@ angular.module("plantApp")
         treeContainer.useQuaternion = true;
         treeContainer.addChild( tree );
         scene.addObject(treeContainer);
-        
         //set up renderer
         renderer = new THREE.WebGLRenderer( { clearColor:0xaaccff, clearAlpha: 1, antialias: true, sortObjects :false} );
         renderer.setSize( window.innerWidth-17, window.innerHeight-90 );
@@ -80,6 +84,37 @@ angular.module("plantApp")
         //rescale and position object on resize
         window.addEventListener( 'resize', resizeHandler, false );
           
+      }
+
+
+      function startanimateleaf(tree){
+        for(var i=0; i<tree.children.length; i++){
+            child = tree.children[i];
+            if(!(child instanceof Tree)){
+                anim = child.move;
+                if(anim instanceof TWEEN.Tween)
+                    anim.start();
+            }
+            else
+                startanimateleaf(child);
+        }
+      }
+
+      function stopanimateleaf(tree){
+        for(var i=0; i<tree.children.length; i++){
+            child = tree.children[i];
+            if(!(child instanceof Tree)){
+                child.move.stop();
+                child.move2.stop();
+            }
+            else
+                stopanimateleaf(child);
+        }
+      }
+
+      $scope.animateleaf=function(){
+        startanimateleaf($scope.tree);
+        setTimeout(function(){stopanimateleaf($scope.tree)},3000);
       }
 
       //scale the tree up to actual size of object

@@ -1,5 +1,5 @@
 //SignUp, logIn, logOut are snippets from mp3
-angular.module("plantApp", ['firebase', 'questionServices'])
+angular.module("plantApp", ['firebase', 'questionServices','answerServices'])
 .controller("AppCtrl",function($scope, $firebase){
 	FirebaseRef = new Firebase("https://eplant.firebaseio.com");
 	$scope.usr = null;
