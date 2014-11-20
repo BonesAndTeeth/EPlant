@@ -94,8 +94,8 @@ angular.module("plantApp")
 
 	function checkanswer(answer, solution){
 		/* convert answer/solution string into valid js math expressions */
-		solution =solution.replace(")(",")*(");
-		answer =answer.replace(")(",")*(");
+		solution =solution.replace(/\)\(/g,")*(");
+		answer =answer.replace(/\)\(/g,")*(");
 		solution = solution.replace(/(\d+|\))(x)/g,"$1*$2");
 		answer =answer.replace(/(\d+|\))(x)/g,"$1*$2");
 
