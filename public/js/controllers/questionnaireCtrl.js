@@ -11,8 +11,8 @@ angular.module("plantApp")
 		type = typeOfQ;
 		selecticon.attr("class","loading icon");
 		msg.attr("class","");
-	  msgicon.attr("class","");
-	  $scope.disablebtn = false;
+		msgicon.attr("class","");
+		$scope.disablebtn = false;
 		$scope.showanswer = false;
 		$scope.problem = null;
 		$scope.solution = null;
