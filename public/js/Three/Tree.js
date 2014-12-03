@@ -80,7 +80,7 @@ Tree = function ( material, level, radius, maxScale) {
 			branchPoint.rotation.y -= 7 * TO_RADIANS;
 		
 		if (scope.level==0)
-			numBlock = 8;
+			numBlock = 7;
 		
 		while (currBlock < numBlock)
 		{
