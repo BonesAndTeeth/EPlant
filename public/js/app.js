@@ -1,6 +1,6 @@
-//SignUp, logIn, logOut contain snippets from mp3
-angular.module("plantApp", ['firebase', 'questionServices','answerServices'])
-.controller("AppCtrl",function($scope, $firebase, $rootScope){
+//SignUp, logIn, logOut are snippets from mp3
+angular.module("plantApp", ['firebase', 'questionServices','answerServices','settreeServices'])
+.controller("AppCtrl",function($scope, $firebase,$rootScope){
 	FirebaseRef = new Firebase("https://eplant.firebaseio.com");
 	$scope.usr = null;
 	$scope.data = "data";

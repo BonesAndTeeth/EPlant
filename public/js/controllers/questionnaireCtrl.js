@@ -128,10 +128,10 @@ angular.module("plantApp")
 				$scope.disablebtn = true;
 
 				/* closes form and broadcasts event for correct answer */
-				setTimeout(function(){
-					form.modal('hide');
-					answerservice.sendanswerevent();
-				},2000);
+				//setTimeout(function(){
+					//form.modal('hide');
+					answerservice.sendrightanswerevent();
+				//},2000);
 
 				/* Update the user info if the answer is correct*/
 				updateScore();
@@ -141,14 +141,19 @@ angular.module("plantApp")
 				$scope.reply="Incorrect";
 				msg.attr("class","ui icon error message");
 				msgicon.attr("class","frown icon");
+
+				//setTimeout(function(){
+					//form.modal('hide');
+					answerservice.sendwronganswerevent();
+				//},2000);
 			}
 		}
 	}
 
 	function checkanswer(answer, solution){
 		/* convert answer/solution string into valid js math expressions */
-		solution =solution.replace(")(",")*(");
-		answer =answer.replace(")(",")*(");
+		solution =solution.replace(/\)\(/g,")*(");
+		answer =answer.replace(/\)\(/g,")*(");
 		solution = solution.replace(/(\d+|\))(x)/g,"$1*$2");
 		answer =answer.replace(/(\d+|\))(x)/g,"$1*$2");
 
