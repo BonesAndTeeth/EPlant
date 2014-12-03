@@ -6,17 +6,20 @@ position: absolute;
 .qtitle{
 	color: #666;
 }
+.ui.active.right.sidebar{
+	margin-left: -20%!important;
+}
 #settree{
-	z-index: 2;
-	margin-top: 47px !important;
+	margin-top: 3.5% !important;
+	width: 19.5% !important;
 	height: 90% !important;
 }
 .ui.vertical.menu .item {
-	padding: 8px !important;
+	padding: 6px !important;
 	/*height: 22% !important;*/
 }
 .table.settree{
-	margin: 10px auto 10px 6px ;
+	margin: 10px auto 10px auto ;
 }
 .leafimg {
     -webkit-transform: rotate(180deg);
@@ -34,6 +37,7 @@ plant-canvas {
 z-index: 1;
 position: fixed;
 margin-top: 0px;
+width: 100% !important;
 }
 .modalbuttons {
 padding: 1rem 2rem;
