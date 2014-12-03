@@ -1,6 +1,6 @@
 //SignUp, logIn, logOut are snippets from mp3
 angular.module("plantApp", ['firebase', 'questionServices','answerServices','settreeServices'])
-.controller("AppCtrl",function($scope, $firebase){
+.controller("AppCtrl",function($scope, $firebase,$rootScope){
 	FirebaseRef = new Firebase("https://eplant.firebaseio.com");
 	$scope.usr = null;
 	$scope.data = "data";
@@ -24,7 +24,6 @@ angular.module("plantApp", ['firebase', 'questionServices','answerServices','set
 			if (error) {
 				console.log('Login Failed!', error);
 			} else {
-				console.log(authData);
 				var auth = $firebase(FirebaseRef.child("users").child(authData.uid));
 				if(set==true){
 					auth.$set({username: $scope.Username, email: $scope.Email});
@@ -37,8 +36,7 @@ angular.module("plantApp", ['firebase', 'questionServices','answerServices','set
 				$scope.loggedIn = true;
 				$scope.loginEmail = "";
 				$scope.loginPassword = "";
-				console.log($scope.loggedIn);
-				console.log($scope.usr);
+				$rootScope.$broadcast('userLoggedIn', $scope.usr);
 			}
 		});
 	};

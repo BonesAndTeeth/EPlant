@@ -1,11 +1,14 @@
 angular.module("plantApp")
-.controller("questionnaireCtrl",function($scope, QA, answerservice){
+.controller("questionnaireCtrl",function($scope, $firebase, $rootScope, QA, answerservice){
 	var msg=angular.element("#reply");
 	var msgicon=angular.element("#replyicon");
 	var selecticon=angular.element("#selecticon");
 	var type=5;
 	var form = angular.element("#qaform");
 	angular.element('.ui.dropdown').dropdown();
+	usr = null;
+	FirebaseRef = new Firebase("https://eplant.firebaseio.com");
+	$scope.$on('userLoggedIn', function(event, mass) { usr = mass; });
 
 	$scope.getquestion = function(typeOfQ){
 		type = typeOfQ;
@@ -30,11 +33,57 @@ angular.module("plantApp")
 			form.modal('show');
 		});		
 	}
+
 	$scope.getanswer = function(){
 		if($scope.problem!=null){
 			$scope.answer = $scope.problem.answer;
 			$scope.showanswer = true;
 			$scope.disablebtn=true;
+		}
+	}
+
+	/* The functions first check if the user should level up.
+	* if yes, level up
+	*/
+	function levelUP(){
+		var tree = $firebase(FirebaseRef.child("trees").child(usr.treeid));
+		var usrTree = tree.$asObject();
+		usrTree.$loaded().then(function() {
+			threshold = 2 * usrTree.level;
+			if (usrTree.water > threshold && usrTree.sunshine > threshold && usrTree.fertilizer > threshold && usrTree.pesticide > threshold){
+				tree.$update({level: usrTree.level + 1});
+				tree.$update({water: usrTree.water - threshold});
+				tree.$update({sunshine: usrTree.sunshine - threshold});
+				tree.$update({fertilizer: usrTree.fertilizer - threshold});
+				tree.$update({pesticide: usrTree.pesticide - threshold});
+			}
+		});
+	}
+
+	/* The functions updates the user's tree's score if the answer is correct. */
+	function updateScore(){
+		if (usr!=null){
+			var tree = $firebase(FirebaseRef.child("trees").child(usr.treeid));
+			var usrTree = tree.$asObject();
+			usrTree.$loaded().then(function() {
+				switch(type) {
+					case 0:  //water
+					tree.$update({water: usrTree.water + 1});
+					break;
+					case 1:  //sunshine
+					tree.$update({sunshine: usrTree.sunshine + 1});
+					break;
+					case 2:  //calculaton
+					tree.$update({fertilizer: usrTree.fertilizer + 1});
+					break;
+					case 3:  //pesticide
+					tree.$update({pesticide: usrTree.pesticide + 1});
+					break;
+					default:
+					break;
+				}
+			});
+			levelUP();
 		}
 	}
 
@@ -83,6 +132,10 @@ angular.module("plantApp")
 					//form.modal('hide');
 					answerservice.sendrightanswerevent();
 				//},2000);
+
+				/* Update the user info if the answer is correct*/
+				updateScore();
+
 			}
 			else{
 				$scope.reply="Incorrect";
@@ -112,5 +165,5 @@ angular.module("plantApp")
 		}
 		return true;
 	}
-	
+
 });
