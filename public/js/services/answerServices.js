@@ -4,8 +4,12 @@ service.factory('answerservice',function($rootScope) {
   var answerservice = {};
 
   /* broadcasts event for correct answer to other controllers */
-  answerservice.sendanswerevent = function() {
-    $rootScope.$broadcast('answerevent');
+  answerservice.sendrightanswerevent = function() {
+    $rootScope.$broadcast('rightanswerevent');
+  };
+
+  answerservice.sendwronganswerevent = function() {
+    $rootScope.$broadcast('wronganswerevent');
   };
 
   return answerservice;

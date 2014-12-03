@@ -3,80 +3,110 @@
  * 
  */
 angular.module("plantApp")
-.controller("canvasCtrl",function($scope, answerservice){
-	$scope.test = "haha";
+.controller("canvasCtrl",function($scope, answerservice, settreeservice){
 	$scope.WebGLNotDetected = false;
+    $scope.sad = false;
     //Show error message if the user's browser does not support webGL
 	if ( ! Detector.webgl ) {
 		$scope.WebGLNotDetected = true;
 	}
-
 	var container, camera, scene, renderer;
-    var tree, treeContainer;
+    var tree, _tree;
     var treeTexture, branchMaterial;
+    var branchTexImgs = ["images/treebark1.jpg","images/treebark2.jpg","images/treebark3.jpg"];
+    var leafTexImgs =[  "images/leaf1.png","images/leaf2.png","images/leaf3.png",
+                        "images/leaf4.png","images/leaf5.png","images/leaf6.png"
+                    ];
 
     /* animates leaves on receival of correct answer */
-    $scope.$on('answerevent',function(){
-        $scope.animateleaf();
+    $scope.$on('rightanswerevent',function(){
+        if($scope.sad){
+            $scope.twup.start();
+        }
+        else{
+            $scope.animateleaf();
+        }
+        $scope.sad = false;
     });
 
-	try{
+    $scope.$on('wronganswerevent',function(){
+        if(!$scope.sad){
+            $scope.twdown.start();
+        }
+        $scope.sad = true;
+    });
+
+    $scope.$on('btexevent',function(e,tid){
+        $scope.setbarktexture(tid);
+    });
+
+    $scope.$on('ltexevent',function(e,tid){
+        $scope.setleaftexture(tid);
+    });
+
+	//try{
 		init();
         drawTree();
         animate();
-		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-	} catch(err) {}
+	//} catch(err) {}
 
       //initialization
       function init() {
 
         container = document.getElementById( 'container' );
+        /*container = document.createElement( 'div' );
+        container.id="container";
+        document.body.appendChild( container );*/ 
 
-        //set up camera and viewing matrix
-        camera =  new THREE.Camera( 70, 1, 0.1, 8000);
-        camera.position.z = -600;
-        camera.position.y = 400;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        var cameraTarget = new THREE.Object3D();
-        cameraTarget.position.y = 400;
-        camera.target = cameraTarget;
-        
         //create scene
         scene = new THREE.Scene();
 
+        //set up camera and viewing matrix
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera.position.z = 800;
+        camera.position.y = 400;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        //camera.updateProjectionMatrix();
+        var cameraTarget = new THREE.Object3D();
+        cameraTarget.position.y = 400;
+        camera.target = cameraTarget;
+        scene.add(camera);
+
         //add light source (white light)
         var light = new THREE.DirectionalLight( 0xffffff );
-        light.position.x = 1;
-        light.position.y = 1;
-        light.position.z = -2;
+        light.position.x = 0;
+        light.position.y = 300;
+        light.position.z = 50000;
         light.position.normalize();
-        scene.addLight( light );
+        scene.add( light );
       
         //create texture from image 
-        var treeTexture = THREE.ImageUtils.loadTexture( "images/treebark.jpg" );
-        treeTexture.minFilter = THREE.LinearFilter;
-        treeTexture.magFilter = THREE.LinearFilter;
+        var treeTexture = THREE.ImageUtils.loadTexture( branchTexImgs[0] );
         treeTexture.wrapS = treeTexture.wrapT = THREE.RepeatWrapping
-        branchMaterial = new THREE.MeshPhongMaterial( { map:treeTexture, shininess: 2, ambient:0x998822} );
+        treeTexture.repeat.set( 2, 2 );
+        branchMaterial = new THREE.MeshPhongMaterial( { map:treeTexture, shininess: 5, ambient:0xffffff, side:THREE.DoubleSide, color:0xcccccc} );
         branchMaterial.shading = THREE.SmoothShading;
         
         //create tree object and add object to the scene
-        tree = new Tree(branchMaterial, 0 , 35, 1, null);
+        var _tree = new THREE.Object3D();
+        tree = new Tree(branchMaterial, 0 , 25, 1);
+
+        //invisible at first
         $scope.tree = tree;
-        tree.position = new THREE.Vector3(0,50,0)
+
+        _tree.position.set(120,130,350);
         tree.rotation.x = -90 * Math.PI / 180;
         tree.rotation.z = -90 * Math.PI / 180;
-        //invisible at first
-        tree.scale = new THREE.Vector3(0,0.1,0)
-        treeContainer = new THREE.Object3D();
-        treeContainer.useQuaternion = true;
-        treeContainer.addChild( tree );
-        scene.addObject(treeContainer);
+        
+        _tree.add(tree);
+        //console.log(tree.tree);
+
+        scene.add(_tree);
+
         //set up renderer
-        renderer = new THREE.WebGLRenderer( { clearColor:0xaaccff, clearAlpha: 1, antialias: true, sortObjects :false} );
-        renderer.setSize( window.innerWidth-17, window.innerHeight-90 );
+        renderer = new THREE.WebGLRenderer( { antialias: true} );
+        renderer.setSize( window.innerWidth-17, window.innerHeight-70 );
+        renderer.setClearColor(0xccffff)
 
         container.innerHTML = "";
         container.appendChild( renderer.domElement );
@@ -86,6 +116,26 @@ angular.module("plantApp")
           
       }
 
+      $scope.setbarktexture = function(id){
+        tree.material.map = THREE.ImageUtils.loadTexture( branchTexImgs[id] );
+      }
+
+      $scope.setleaftexture = function(id){
+        console.log(id);
+        setleaftex(tree,id);
+      }
+
+      function setleaftex(tree_,id){
+        for(var i=0; i<tree_.children.length;i++){
+            c = tree_.children[i];
+            if(c instanceof Tree){
+                setleaftex(c,id);
+            }
+            else{
+                c.material.map = THREE.ImageUtils.loadTexture( leafTexImgs[id] );
+            }
+        }
+      }
 
       function startanimateleaf(tree){
         for(var i=0; i<tree.children.length; i++){
@@ -113,6 +163,7 @@ angular.module("plantApp")
       }
 
       $scope.animateleaf=function(){
+        //tree.material.map = THREE.ImageUtils.loadTexture( "images/treebark2.jpg" );
         startanimateleaf($scope.tree);
         setTimeout(function(){stopanimateleaf($scope.tree)},3000);
       }
@@ -124,24 +175,67 @@ angular.module("plantApp")
         .to({x: 1, y: 1, z: 1}, 2000)
         .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
         .start();
+
+        var start ={x:0}
+        var flag = true;
+        $scope.twdown = new TWEEN.Tween(start)
+        .delay(600)
+        .to({x:0},1500)
+        .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+        .onUpdate(function(){bend(tree,flag,1);flag=false;});
+
+        var flag1 = true;
+        $scope.twup = new TWEEN.Tween(start)
+        .delay(600)
+        .to({x:0},1500)
+        .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+        .onUpdate(function(){bend(tree,flag1,-1),flag1=false;});
+
+        //twdown.chain(twup);
+        //twdown.start();
       
       }
 
       //main display function
       function animate() {
         requestAnimationFrame( animate );
+        //tree.rotation.z +=0.01
         TWEEN.update();
         renderer.render(scene, camera);
       }
+
       
+      // dir +1 down, -1 up
+      function bend(t, flag, dir){
+        var temp = new THREE.Vector3(0,1,0);
+        temp.normalize();
+        if(!(t instanceof Tree)){
+            t.position.add(new THREE.Vector3(0,dir*0.5,dir*(-0.5)));
+            /*if(flag){
+                if(dir<0)
+                    t.toGreen.start();
+                else
+                    t.toRed.start();
+            }*/
+            return;
+        }
+        t.geometry.verticesNeedUpdate = true;
+        if(t.level >= 2){
+            for (var i=0; i<t.geometry.vertices.length; i++){
+                vert = t.geometry.vertices[i]; 
+                angle =dir*0.0001*i 
+                vert.applyAxisAngle (temp, angle);
+            }
+        }
+        for(var c=0; c<t.children.length; c++){
+                child = t.children[c];
+                bend(child,flag,dir);
+        }
+      }
+
       function resizeHandler(){
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize( window.innerWidth, window.innerHeight );
       }
-      
-    try{
-    	var pageTracker = _gat._getTracker("UA-181266-1");
-    	pageTracker._trackPageview();
-    } catch(err) {}
 });

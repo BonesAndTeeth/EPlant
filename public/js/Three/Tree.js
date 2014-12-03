@@ -4,9 +4,15 @@
  */
 
 //leaf texture from image
-var leafTexture = THREE.ImageUtils.loadTexture( "images/leaf.png" );
-var leafGeometry = new THREE.Plane( 20, 20,1, 1 );
-var leafMaterial = new THREE.MeshBasicMaterial( { opacity:0.95, map: leafTexture, blending: THREE.NormalBlending, depthTest: true, transparent : true} );
+var leafTexture = THREE.ImageUtils.loadTexture( "images/leaf1.png" );
+var leafGeometry = new THREE.PlaneBufferGeometry( 25, 25,1, 1 );
+var leafMaterial = new THREE.MeshBasicMaterial( { opacity:0.95, 
+																									map: leafTexture, 
+																									blending: THREE.NormalBlending, 
+																									depthTest: true, 
+																									transparent : true, 
+																									/*color:0x00ee00*/
+																								} );
 
 //convert degree to radian
 var TO_RADIANS = Math.PI / 180;
@@ -14,128 +20,120 @@ var TO_RADIANS = Math.PI / 180;
 //number of sides in tree branches
 var numSide = 10;
 
+
 /*
 number of blocks
 each branch is made up of blocks stacked 
 on top of one another
 */
-var numBlock = 10;
-
+var numBlock =10;
 
 //maximum brach level of tree
-var MAX_LEVEL = 3;
+var MAX_LEVEL = 2;
 
+//maximum number of branches
+var MAX_BRANCH = 160;
+
+//number of branches already generated
+var totalnumBranch = 0;
+
+var NUM_LEAF = 50;
 //constructor
 //materials: branch texture
 //level: current level of branch
 //radius: base radius
-//dir: branch direction
-Tree = function ( materials, level, radius, maxScale, dir) {
-	THREE.Mesh.call( this, new THREE.Geometry(), materials );
 
-	this.dir = dir;
-	
+
+Tree = function ( material, level, radius, maxScale) {
+	THREE.Mesh.call(this, new THREE.Geometry(), material);
 	this.level = level;
 	this.doubleSided = false;
-
 	this.maxScale = maxScale;
 	this.radius = radius;
+	
+	//generate geometry
+	build(this);
 
-	if( this.radius < 0.5 ) this.radius = .5
-	
-	//generate webGL geometry
-	build( this )
-	
 	this.geometry.computeFaceNormals();
 	this.geometry.computeVertexNormals();
-
 	this.geometry.__dirtyVertices = true;
 	this.geometry.__dirtyNormals = true;
+	
 
 	
 	function build( scope ) {
-	
 		var currBlock = 0;
 		var R;
 		var S;
 		var branchPoint;
 		var height;
 		var radiusStep;
-
-		branchPoint = new THREE.Object3D();
+		var basePoint = new THREE.Vector3(0,0,0);
+		var branchPoint = new THREE.Object3D();
 		
 		//height of each block
-		height = 30*scope.maxScale;
+		height = 40*scope.maxScale;
 		
 		radiusStep = scope.radius / (numBlock+1);
 
-		basePoint = new THREE.Vector3(0,0,0);
+		if(scope.level>0)
+			branchPoint.rotation.y -= 7 * TO_RADIANS;
+		
+		if (scope.level==0)
+			numBlock = 8;
 		
 		while (currBlock < numBlock)
 		{
 			basePoint.x = branchPoint.position.x;
 			basePoint.y = branchPoint.position.y;
 			basePoint.z = branchPoint.position.z;
-			
 			branchPoint.translateZ(height);
+
 			
-			//spread out the branches
-			branchPoint.rotation.y += 3*(scope.level) * TO_RADIANS;
-			
+			//curvature
+			branchPoint.rotation.x += 3*(scope.level) * TO_RADIANS;
+			branchPoint.rotation.y -= 5*(scope.level) * TO_RADIANS;
+			branchPoint.rotation.z += 5*(scope.level) * TO_RADIANS;
+
+
 			//compute local coordinate system for the branch
 			var diffVector = new THREE.Vector3();
-			diffVector.sub( branchPoint.position, basePoint)
+			diffVector.subVectors( branchPoint.position, basePoint)
 			var transformPoint = new THREE.Vector3()
-			transformPoint.add(diffVector, new THREE.Vector3(10, 0, 0));
+			transformPoint.addVectors(diffVector, new THREE.Vector3(1, 0, 0));
 			R = new THREE.Vector3()
-			R.cross(transformPoint, diffVector);
+			R.crossVectors(transformPoint, diffVector);
 			S = new THREE.Vector3()
-			S.cross(R, diffVector);
+			S.crossVectors(R, diffVector);
 			R.normalize();
 			S.normalize();
 
 			//generate vertices and faces for current block
-			drawBlock( currBlock == 0  );
+			drawBlock( currBlock == 0 ,currBlock==numBlock-1 );
 
-			branchPoint.updateMatrix();
 
-			//recursively create child branches on current branch 
-			if(level < MAX_LEVEL && currBlock==4 || (level==0 && currBlock==3)){
-				var k=0;
-				//random number of branches
-				numBranch = Math.random()*3+2;
-				for(; k<numBranch; k++){
-					//dir used to balance left and right 
-					dir = (scope.dir==null)?(k>1):!(scope.dir);
-					newBranch = new Tree(scope.materials, scope.level+1, scope.radius*0.95, scope.maxScale*0.9,dir);
-					newBranch.position = branchPoint.position.clone();
-					newBranch.rotation = branchPoint.rotation.clone();
-					angle = Math.random()*250*TO_RADIANS;
-					if(newBranch.dir)
-						newBranch.rotation.z += angle;
-					else
-						newBranch.rotation.z -= angle;
-					scope.addChild(newBranch);
-				}
-
-			}
-				
-			//append leaves on the tip of branches of last level
-			if( currBlock >= 6 && level >1) {
-				for( i=0; i<2; i++ ) {
-					var leaf = new THREE.Mesh( leafGeometry, leafMaterial );
+			if(scope.level>0&&currBlock>5) {
+				for( i=0; i<NUM_LEAF; i++ ) {
+					leaf = new THREE.Mesh( leafGeometry, leafMaterial );
 					leaf.doubleSided = true
-					leaf.position = branchPoint.position.clone();
-					leaf.position.x += Math.random()*10
-					leaf.position.y += Math.random()*10
-					leaf.position.z += Math.random()*10
+					leaf.position.set(branchPoint.position.x, branchPoint.position.y, branchPoint.position.z);
+					leaf.position.x += Math.min(Math.random()*5*i,70);
+					leaf.position.y += Math.min(Math.random()*5*i,100);
+					leaf.position.z -=  Math.min(Math.random()*20);
 					leaf.rotation = branchPoint.rotation.clone();
-					leaf.rotation.x = 90 * TO_RADIANS;
-					leaf.rotation.y = Math.random()*90 * TO_RADIANS
-					leaf.rotation.z = Math.random()*90 * TO_RADIANS;
-					
+					leaf.rotation.z = 90 * TO_RADIANS;
+					leaf.rotation.y = Math.random()*180 * TO_RADIANS
+					leaf.rotation.x = Math.random()*180 * TO_RADIANS;
+					scope.add( leaf );
 
-        	var curr = leaf.rotation;
+					leaf.toRed = new TWEEN.Tween(leaf.material.color)
+						.to({r:0.9, g:0.57, b:0}, 3000)
+						.easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+					leaf.toGreen = new TWEEN.Tween(leaf.material.color)
+						.to({r:0, g:0.9, b:0}, 3000)
+						.easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+
+					var curr = leaf.rotation;
         	var bppos = branchPoint.position
         	leaf.move= new TWEEN.Tween(leaf.rotation)
         		.to({x:curr.x+60*TO_RADIANS,y:curr.y+30*Math.random()*TO_RADIANS,z:curr.z+30*Math.random()*TO_RADIANS}, Math.random()*200+100)
@@ -143,31 +141,47 @@ Tree = function ( materials, level, radius, maxScale, dir) {
         	leaf.move2= new TWEEN.Tween(leaf.rotation)
         		.to({x:curr.x+Math.random()*50*TO_RADIANS,y:curr.y, z:curr.z}, Math.random()*300+100)
         		.easing(TWEEN.Easing.Sinusoidal.EaseInOut)
-					        		
-					scope.addChild( leaf );
 
 					leaf.move.chain(leaf.move2);
 					leaf.move2.chain(leaf.move);
-					//leaf.move.start();
-					
 					
 				}
 				
 			}
-			
+
+			//recursively create child branches on current branch 
+			if(scope.level < MAX_LEVEL && currBlock==level*2+2 && totalnumBranch<MAX_BRANCH){
+				var k=0;
+
+				//random number of branches
+				numBranch = (scope.level*Math.random())*2+2;
+				if (scope.level==0)
+					numBranch = 4;
+				for(; k<numBranch; k++){
+					newBranch = new Tree(scope.material, scope.level+1, scope.radius*0.95, scope.maxScale*Math.pow(0.85, scope.level+1));
+					scope.add(newBranch);
+					totalnumBranch++;
+					newBranch.position.set(branchPoint.position.x, branchPoint.position.y, branchPoint.position.z);
+
+					//distribute new branches evenly around parent branch
+					tmp = new THREE.Vector3()
+					tmp.subVectors(branchPoint.position, basePoint)
+					tmp.normalize();
+					newBranch.rotateOnAxis (tmp, k*(360/(numBranch+1))*TO_RADIANS);
+
+				}
+
+			}
+				
 			currBlock++;
 			scope.radius = scope.radius-radiusStep;
 
-			function drawBlock( bottom ) {
+			function drawBlock( bottom ,top) {
 				
 				var angle;
 				var currSide;
 				var newVertex;
 				var p1,p2,p3,p4;
-				
-				var vertices = scope.geometry.vertices
-				var faces = scope.geometry.faces
-				var faceVertexUvs = scope.geometry.faceVertexUvs
 				
 				angle = Math.PI * 2 / numSide;
 
@@ -175,6 +189,9 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 
 				//compute vertex coordinates on each cross section of the current block				
 				currSide = 0;
+
+				var temp = new THREE.Vector3(0,1,0);
+        temp.normalize();
 				while (currSide < numSide)
 				{
 					
@@ -182,48 +199,61 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 					y = basePoint.y + radius * Math.cos(currSide * angle) * R.y + radius * Math.sin(currSide * angle) * S.y;
 					z = basePoint.z + radius * Math.cos(currSide * angle) * R.z + radius * Math.sin(currSide * angle) * S.z;
 					
-					newVertex = new THREE.Vertex( new THREE.Vector3(x,y,z));
-					vertices.push(newVertex);
-
+					var newVertex = new THREE.Vector3(x,y,z);
+        	if(scope.level>=MAX_LEVEL-0){
+        		var vangle = 0.12*currBlock
+        		newVertex.applyAxisAngle (temp, vangle);
+        	}
+					scope.geometry.vertices.push(newVertex);
 					currSide++;
 				}
-				
 				if ( bottom ) 
 					return;
 
 				//link vertices to form faces in the two cross sections below
 				currSide = 0;
+				var numV = scope.geometry.vertices.length;
 				while (currSide < numSide)
 				{
 					
 					if ( currSide < (numSide - 1)) {
-						p1 = vertices.length - numSide + currSide + 1;
-						p4 = vertices.length - numSide + currSide ;
-						p2 = vertices.length - numSide * 2 + currSide + 1;
-						p3 = vertices.length - numSide * 2 + currSide;
+						p1 = numV - numSide + currSide + 1;
+						p4 = numV - numSide + currSide ;
+						p2 = numV - numSide * 2 + currSide + 1;
+						p3 = numV - numSide * 2 + currSide;
 					}
 					else {
-						p1 = vertices.length - numSide;
-						p4 = vertices.length - numSide + currSide;
-						p2 = vertices.length - numSide * 2;
-						p3 = vertices.length - numSide * 2 + currSide;
+						p1 = numV - numSide;
+						p4 = numV - numSide + currSide;
+						p2 = numV - numSide * 2;
+						p3 = numV - numSide * 2 + currSide;
 					}	
-					faces.push( new THREE.Face4( p1, p2, p3, p4  ) );
+
+					scope.geometry.uvsNeedUpdate = true;
+					scope.geometry.faces.push( new THREE.Face3( p4, p1, p2  ) );
+					var uvc =0.1;
 					
-					//compute texture coordinates
-					var startX = 1/numSide*(currSide+1);
-					var endX = startX - 1/numSide;
+					scope.geometry.faceVertexUvs[ 0 ].push([
+							new THREE.Vector2(0,uvc),
+							new THREE.Vector2(uvc,uvc),
+							new THREE.Vector2(uvc,0)
+						]);
+					scope.geometry.faces.push( new THREE.Face3( p2, p3, p4  ) );
 					
-					var startY = currBlock/numBlock*3;
-					var endY = startY + 1/numBlock*3
-					
-					faceVertexUvs[ 0 ].push([
-						new THREE.UV( startX, endY),
-						new THREE.UV( startX,startY ),
-						new THREE.UV( endX ,startY ),
-						new THREE.UV( endX, endY )
-					])
-					
+					scope.geometry.faceVertexUvs[ 0 ].push([
+							new THREE.Vector2(uvc,0),
+							new THREE.Vector2(0,0),
+							new THREE.Vector2(0,uvc)
+						]);
+
+					//close the top
+					if(top){
+						var p0 = numV - numSide;
+						for(var v=1; v<numSide-1; v++){
+							scope.geometry.faces.push( new THREE.Face3(p0,p0+v,p0+v+1) );
+						}
+
+					}
 					currSide++;
 				}
 			}

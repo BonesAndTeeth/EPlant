@@ -79,15 +79,20 @@ angular.module("plantApp")
 				$scope.disablebtn = true;
 
 				/* closes form and broadcasts event for correct answer */
-				setTimeout(function(){
-					form.modal('hide');
-					answerservice.sendanswerevent();
-				},2000);
+				//setTimeout(function(){
+					//form.modal('hide');
+					answerservice.sendrightanswerevent();
+				//},2000);
 			}
 			else{
 				$scope.reply="Incorrect";
 				msg.attr("class","ui icon error message");
 				msgicon.attr("class","frown icon");
+
+				//setTimeout(function(){
+					//form.modal('hide');
+					answerservice.sendwronganswerevent();
+				//},2000);
 			}
 		}
 	}
