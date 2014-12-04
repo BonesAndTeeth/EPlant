@@ -10,6 +10,12 @@ service.factory('settreeservice',function($rootScope) {
   settreeservice.sendltexevent = function(tid) {
     $rootScope.$broadcast('ltexevent',tid);
   };
+	settreeservice.sendcloudevent = function(action) {
+    $rootScope.$broadcast('cloudevent',action);
+  };
+  settreeservice.sendcolorevent = function(colorval) {
+    $rootScope.$broadcast('colorevent',colorval);
+  };
 
   return settreeservice;
 });

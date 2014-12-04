@@ -236,3 +236,7 @@ Tree = function ( materials, level, radius, maxScale, dir) {
 Tree.prototype = new THREE.Mesh();
 Tree.prototype.constructor = Tree;
 Tree.prototype.supr = THREE.Mesh.prototype;
+
+Tree.prototype.testf = function(){
+	console.log("this is a tree");
+}
