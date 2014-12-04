@@ -37,7 +37,7 @@ plant-canvas {
 z-index: 1;
 position: fixed;
 margin-top: 0px;
-width: 100% !important;
+width: 99% !important;
 }
 .modalbuttons {
 padding: 1rem 2rem;

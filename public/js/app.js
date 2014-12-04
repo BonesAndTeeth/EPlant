@@ -4,7 +4,7 @@ angular.module("plantApp", ['firebase', 'questionServices','answerServices','set
 	FirebaseRef = new Firebase("https://eplant.firebaseio.com");
 	$scope.usr = null;
 	$scope.data = "data";
-	$scope.loggedIn = true;
+	$scope.loggedIn = false;
 
 	//logout fucntion
 	$scope.logout = function(){
