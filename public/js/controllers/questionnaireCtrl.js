@@ -3,15 +3,19 @@ angular.module("plantApp")
 	var msg=angular.element("#reply");
 	var msgicon=angular.element("#replyicon");
 	var selecticon=angular.element("#selecticon");
-	var type=5;
+	var prevType = 5;
+	$scope.type = 5;
 	var form = angular.element("#qaform");
 	angular.element('.ui.dropdown').dropdown();
 	usr = null;
 	FirebaseRef = new Firebase("https://eplant.firebaseio.com");
 	$scope.$on('userLoggedIn', function(event, mass) { usr = mass; });
+	$scope.answerCorrect = false;
+	$scope.loading = false;
+	$scope.givenUp = false;
 
 	$scope.getquestion = function(typeOfQ){
-		type = typeOfQ;
+		$scope.type =  typeOfQ;
 		selecticon.attr("class","loading icon");
 		msg.attr("class","");
 		msgicon.attr("class","");
@@ -20,6 +24,9 @@ angular.module("plantApp")
 		$scope.problem = null;
 		$scope.solution = null;
 		$scope.reply = null;
+		$scope.answerCorrect = false;
+		$scope.loading = false;
+		$scope.givenUp = false;
 		QA.get({id : typeOfQ}).$promise.then(function(data){
 			$scope.problem = data;
 			$scope.qtitle = data.qtitle;
@@ -39,6 +46,7 @@ angular.module("plantApp")
 			$scope.answer = $scope.problem.answer;
 			$scope.showanswer = true;
 			$scope.disablebtn=true;
+			$scope.givenUp = true;
 		}
 	}
 
@@ -66,14 +74,14 @@ angular.module("plantApp")
 			var tree = $firebase(FirebaseRef.child("trees").child(usr.treeid));
 			var usrTree = tree.$asObject();
 			usrTree.$loaded().then(function() {
-				switch(type) {
+				switch($scope.type) {
 					case 0:  //water
 					tree.$update({water: usrTree.water + 1});
 					break;
 					case 1:  //sunshine
 					tree.$update({sunshine: usrTree.sunshine + 1});
 					break;
-					case 2:  //calculaton
+					case 2:  //fertilizer
 					tree.$update({fertilizer: usrTree.fertilizer + 1});
 					break;
 					case 3:  //pesticide
@@ -87,6 +95,31 @@ angular.module("plantApp")
 		}
 	}
 
+	$scope.updateQuestion = function(){
+		$scope.givenUp = false;
+		$scope.type = (prevType + 1)%4;
+		console.log("The new question type is " + $scope.type);
+		msg.attr("class","");
+		msgicon.attr("class","");
+		$scope.loading = true;
+		$scope.disablebtn = false;
+		$scope.showanswer = false;
+		$scope.problem = null;
+		$scope.solution = null;
+		$scope.reply = null;
+		QA.get({id : $scope.type}).$promise.then(function(data){
+			$scope.problem = data;
+			$scope.qtitle = data.qtitle;
+			$scope.question = data.question;
+			$scope.question2 = data.equation2;
+			$scope.answer = data.answer;
+			$scope.placeholder="Please enter your answer here"
+			if($scope.type==1)
+				$scope.placeholder="Please enter your answer in the format of (x,y)";
+			$scope.loading = false;
+		});	
+	};
+
 	$scope.postsolution = function(){
 		if($scope.problem!=null && $scope.solution!=null && !$scope.disablebtn){
 			var solution = $scope.solution;
@@ -98,12 +131,12 @@ angular.module("plantApp")
 			solution.replace(/[^a-zA-Z0-9\(\)\.]/,"");
 
 			/* complicated answer check for factorization, see below */
-			if(type==0)
+			if($scope.type==0)
 				result=checkanswer(solution,answer);
 
 			/* linear equations: check for both x and y */
 			/* use eval to deal with decimals (E.g. 1 vs 1.0) */
-			else if(type==1){
+			else if($scope.type==1){
 				/* value of x variable */
 				xvalsol = solution.split(/[\(\),]+/)[1];
 				xvalans = answer.split(/[\(\),]+/)[1];
@@ -121,31 +154,39 @@ angular.module("plantApp")
 			/* check answer value for calculation and word problems */
 			else
 				result=(eval(solution) == eval(answer));
+
 			if(result){
 				$scope.reply="Correct";
 				msg.attr("class","ui icon success message");
 				msgicon.attr("class","smile icon");
 				$scope.disablebtn = true;
+				$scope.answerCorrect = true;
+				$(".ui.dimmer").css("background-color", "transparent");
 
 				/* closes form and broadcasts event for correct answer */
-				//setTimeout(function(){
-					//form.modal('hide');
-					answerservice.sendrightanswerevent();
-				//},2000);
+				answerservice.sendrightanswerevent();
 
 				/* Update the user info if the answer is correct*/
 				updateScore();
 
+				setTimeout(function(){
+					$(".ui.dimmer").css("background-color", "rgba(25,25,25,0.9)");
+					$scope.answerCorrect = false;
+					prevType = $scope.type;
+					$scope.type = 5;
+				},5000);
+
+
 			}
 			else{
+				$(".ui.dimmer").css("background-color", "transparent");
 				$scope.reply="Incorrect";
 				msg.attr("class","ui icon error message");
 				msgicon.attr("class","frown icon");
-
-				//setTimeout(function(){
-					//form.modal('hide');
-					answerservice.sendwronganswerevent();
-				//},2000);
+				answerservice.sendwronganswerevent();
+				setTimeout(function(){
+					$(".ui.dimmer").css("background-color", "rgba(25,25,25,0.9)");
+				},5000);
 			}
 		}
 	}

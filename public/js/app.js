@@ -88,5 +88,6 @@ angular.module("plantApp", ['firebase', 'questionServices','answerServices','set
 		})
 		.modal('hide others')
 		.modal('show');
+
 	};
 }); 
