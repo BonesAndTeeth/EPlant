@@ -58,9 +58,17 @@
     </div>
   </div> 
 
-  <questionnaire></questionnaire> 
-  <settree></settree>
-  <plant-canvas></plant-canvas>
+  <div ng-hide="loggedIn">
+    <div class="ui red inverted center aligned segment">
+      <p>Hey, you must log in to view your tree. <a ng-click="signupmodal();">Sign up</a> to get a tree!</p>
+    </div>    
+    <div ng-include src="'partials/treeDemo.html'">
+    </div>
+  </div>
+
+  <questionnaire ng-show="loggedIn"></questionnaire> 
+  <settree ng-show="loggedIn"></settree>
+  <plant-canvas ng-show="loggedIn"></plant-canvas>
 
   <!---------------------------------------------------------------------------------->
   <!-----------------------------login/logout/sign up--------------------------------->
@@ -84,36 +92,36 @@
       </div>
       <div class="ui vertical divider" id="or" style="color:rgb(190,208,247)">
        &nbsp;&nbsp;&nbsp;Or&nbsp;&nbsp;&nbsp;
+     </div>
+     <div class="center aligned column">
+      <div class="big red ui button" ng-click="signupmodal();" id="signUpB">
+        Sign Up
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ui signup small modal" id="signUpModal">
+  <div class="column">
+    <div class="ui fluid form segment">
+      <div class="field" id="UsernameField">
+        <input placeholder="Username" type="text" ng-model="Username" name="Username">
+      </div>
+      <div class="field" id="EmailField">
+        <input placeholder="Email" type="text" ng-model="Email" name="Email">
+      </div>
+      <div class="field" id="PasswordFirstField">
+        <input placeholder="Password" type="password" ng-model="PasswordFirst" name="PasswordFirst">
+      </div>
+      <div class="field" id="PasswordConfirmField">
+        <input placeholder="Confirm Password" type="password" ng-model="PasswordConfirm" name="PasswordConfirm">
       </div>
       <div class="center aligned column">
-        <div class="big red ui button" ng-click="signupmodal();" id="signUpB">
-          Sign Up
-        </div>
+        <div class="ui red small action button" ng-click="userSignup()" id="joinB">Join!</div>
       </div>
     </div>
   </div>
-
-  <div class="ui signup small modal" id="signUpModal">
-    <div class="column">
-      <div class="ui fluid form segment">
-        <div class="field" id="UsernameField">
-          <input placeholder="Username" type="text" ng-model="Username" name="Username">
-        </div>
-        <div class="field" id="EmailField">
-          <input placeholder="Email" type="text" ng-model="Email" name="Email">
-        </div>
-        <div class="field" id="PasswordFirstField">
-          <input placeholder="Password" type="password" ng-model="PasswordFirst" name="PasswordFirst">
-        </div>
-        <div class="field" id="PasswordConfirmField">
-          <input placeholder="Confirm Password" type="password" ng-model="PasswordConfirm" name="PasswordConfirm">
-        </div>
-        <div class="center aligned column">
-          <div class="ui red small action button" ng-click="userSignup()" id="joinB">Join!</div>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
 </body>
 

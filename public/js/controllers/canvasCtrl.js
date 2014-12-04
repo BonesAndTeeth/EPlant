@@ -1,7 +1,7 @@
 /**
- *  based on http://inear.se/three_tree/
- * 
- */
+*  based on http://inear.se/three_tree/
+* 
+*/
 angular.module("plantApp")
 .controller("canvasCtrl",function($scope, answerservice, settreeservice){
 	$scope.WebGLNotDetected = false;
@@ -11,7 +11,7 @@ angular.module("plantApp")
 		$scope.WebGLNotDetected = true;
 	}
 	var container, camera, scene, renderer;
-    var tree, _tree, rain;
+    var tree, _tree, water, sunshine, fertilizer, pesticide;
     var treeTexture, branchMaterial;
     var branchTexImgs = ["images/treebark1.jpg","images/treebark2.jpg","images/treebark3.jpg"];
     var leafTexImgs =[  "images/leaf1.png","images/leaf2.png","images/leaf3.png",
@@ -36,8 +36,33 @@ angular.module("plantApp")
         blending: THREE.NormalBlending,
         transparent: true
     });
-
-    var ctr = new THREE.Vector3(140, 900, 70);
+    var sunmat = new THREE.PointCloudMaterial({
+        color: 0xffcc00,
+        size: 30,
+        map: THREE.ImageUtils.loadTexture(
+            "images/sun.png"
+        ),
+        blending: THREE.AdditiveBlending,
+        transparent: true
+    });
+    var fertmat = new THREE.PointCloudMaterial({
+        color: 0x00ac00,
+        size: 20,
+        map: THREE.ImageUtils.loadTexture(
+            "images/star.png"
+        ),
+        blending: THREE.NormalBlending,
+        transparent: true
+    });
+    var pestmat = new THREE.PointCloudMaterial({
+        color: 0x00aa00,
+        size: 30,
+        map: THREE.ImageUtils.loadTexture(
+            "images/pest.png"
+        ),
+        blending: THREE.NormalBlending,
+        transparent: true
+    });
 
 
     /* animates leaves on receival of correct answer */
@@ -84,7 +109,6 @@ angular.module("plantApp")
         }
         if(code==39){
             $scope.tree.rotation.z+=0.1;
-            $scope.rain();
         }
         if(code==40){
             $scope.camera.position.z-=1;
@@ -96,6 +120,23 @@ angular.module("plantApp")
             $scope.tree.testf();
         }
     });
+
+    $scope.$on('actionevent',function(e,aid){
+        switch(aid){
+            case 0:
+                $scope.water();
+                break;
+            case 1:
+                $scope.sunshine();
+                break;
+            case 2:
+                $scope.fertilizer();
+                break;
+            case 3:
+                $scope.pesticide();
+                break;
+        }
+    })
 	//try{
 		init();
         drawTree();
@@ -281,24 +322,75 @@ angular.module("plantApp")
         .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
         .onUpdate(function(){bend(tree,false,-1)});
 
-        $scope.twrain = new TWEEN.Tween()
+        $scope.twwater = new TWEEN.Tween()
         .to({},9000)
         .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
-        .onUpdate(function(){rain.update()});
+        .onUpdate(function(){water.update()});
+
+        $scope.twsun = new TWEEN.Tween()
+        .to({},5000)
+        .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+        .onUpdate(function(){sunshine.update()});
+
+        $scope.twfert = new TWEEN.Tween()
+        .to({},5000)
+        .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+        .onUpdate(function(){fertilizer.update()});
+
+         $scope.twpest = new TWEEN.Tween()
+        .to({},5000)
+        .easing(TWEEN.Easing.Sinusoidal.EaseInOut)
+        .onUpdate(function(){pesticide.update()});
 
 
       }
 
-      $scope.rain = function(){
-        rain = new Action(0,500,watermat,ctr,300);
-        rain.init();
-        scene.add(rain.system);
-        $scope.twrain.start();
+/////////////
+// ACTIONS //
+/////////////
+
+      $scope.water = function(){
+        var ctr = new THREE.Vector3(140, 900, 70);
+        water = new Action(0,500,watermat,ctr,300);
+        water.init();
+        scene.add(water.system);
+        $scope.twwater.start();
         if($scope.sad<4){
             setTimeout(function(){$scope.twdown.start();},2800);
-            setTimeout(function(){$scope.twup.start();},6000);
+            setTimeout(function(){$scope.twup.start();$scope.scene.remove(water.system)},6000);
         }
       }
+
+      $scope.sunshine = function(){
+        var ctr = new THREE.Vector3(140, 500, 320);
+        sunshine = new Action(1,500,sunmat,ctr,300);
+        sunshine.init();
+        scene.add(sunshine.system);
+        $scope.twsun.start();
+        setTimeout(function(){scene.remove(sunshine.system);},4000);
+      }
+
+      $scope.fertilizer = function(){
+        var ctr = new THREE.Vector3(140, 150, 300);
+        fertilizer = new Action(2,300,fertmat,ctr,100);
+        fertilizer.init();
+        scene.add(fertilizer.system);
+        $scope.twfert.start();
+        setTimeout(function(){scene.remove(fertilizer.system);},5000);
+      }
+
+      $scope.pesticide = function(){
+        var ctr = new THREE.Vector3(130, 450, 320);
+        pesticide = new Action(1,500,pestmat,ctr,150);
+        pesticide.init();
+        scene.add(pesticide.system);
+        $scope.twpest.start();
+        setTimeout(function(){scene.remove(pesticide.system);},3000);
+      }
+/////////////
+// ACTIONS //
+/////////////
+
 
       //main display function
       function animate() {
@@ -335,4 +427,6 @@ angular.module("plantApp")
         camera.updateProjectionMatrix();
         renderer.setSize( window.innerWidth, window.innerHeight );
       }
+
+	
 });

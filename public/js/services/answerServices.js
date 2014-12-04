@@ -12,5 +12,9 @@ service.factory('answerservice',function($rootScope) {
     $rootScope.$broadcast('wronganswerevent');
   };
 
+  answerservice.sendactionevent = function(aid){
+  	$rootScope.$broadcast('actionevent',aid);
+  }
+
   return answerservice;
 });
