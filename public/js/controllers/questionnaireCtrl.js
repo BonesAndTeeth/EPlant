@@ -16,6 +16,7 @@ angular.module("plantApp")
 
 	/* The function requests a question (with answer from service) and returns the result to the requester */
 	$scope.getquestion = function(typeOfQ){
+		prevType = typeOfQ;
 		$scope.type =  typeOfQ;
 		selecticon.attr("class","loading icon");
 		msg.attr("class","");
@@ -101,6 +102,7 @@ angular.module("plantApp")
 	$scope.updateQuestion = function(){
 		$scope.givenUp = false;
 		$scope.type = (prevType + 1)%4;
+		prevType = $scope.type;
 		console.log("The new question type is " + $scope.type);
 		msg.attr("class","");
 		msgicon.attr("class","");
@@ -187,7 +189,6 @@ angular.module("plantApp")
 					$(".ui.dimmer").css("background-color", "rgba(25,25,25,0.9)");
 					$scope.answerCorrect = false;
 					prevType = $scope.type;
-					$scope.type = 5;
 				},5000);
 
 
