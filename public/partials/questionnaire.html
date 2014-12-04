@@ -11,7 +11,9 @@
     </div>
   </div>
 </div>
-
+<!---------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------ The question modal -------------------------------------------------->
+<!---------------------------------------------------------------------------------------------------------------------->
 <div class="ui small long modal" id="qaform">
   <i class="close icon" id="closeIcon"></i>
   <div class="content">
@@ -36,13 +38,11 @@
             <div id="question2">{{question2}}</div>
           </div>
         </div>
-
         <div class="ui fluid left icon input" ng-show="!showanswer" id="answerSection">
           <input ng-model="solution" type="text" placeholder={{placeholder}} name="answerInput">
           <i class="edit icon"></i>
         </div>
       </div>
-
       <div id="reply" ng-show="!showanswer">
         <i id="replyicon"></i>
         <div class="content" id="replyContent">{{reply}}</div>

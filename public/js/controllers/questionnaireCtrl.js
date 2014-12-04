@@ -14,6 +14,7 @@ angular.module("plantApp")
 	$scope.loading = false;
 	$scope.givenUp = false;
 
+	/* The function requests a question (with answer from service) and returns the result to the requester */
 	$scope.getquestion = function(typeOfQ){
 		$scope.type =  typeOfQ;
 		selecticon.attr("class","loading icon");
@@ -41,6 +42,7 @@ angular.module("plantApp")
 		});		
 	}
 
+	/* Recurns the answer of the current question */
 	$scope.getanswer = function(){
 		if($scope.problem!=null){
 			$scope.answer = $scope.problem.answer;
@@ -95,6 +97,7 @@ angular.module("plantApp")
 		}
 	}
 
+	/* The function changes the question for the user to answer */
 	$scope.updateQuestion = function(){
 		$scope.givenUp = false;
 		$scope.type = (prevType + 1)%4;
@@ -120,6 +123,7 @@ angular.module("plantApp")
 		});	
 	};
 
+	/* The function post the correct answer on question modal */
 	$scope.postsolution = function(){
 		if($scope.problem!=null && $scope.solution!=null && !$scope.disablebtn){
 			var solution = $scope.solution;
@@ -161,6 +165,8 @@ angular.module("plantApp")
 				msgicon.attr("class","smile icon");
 				$scope.disablebtn = true;
 				$scope.answerCorrect = true;
+
+				/* Dimmer disappears */
 				$(".ui.dimmer").css("background-color", "transparent");
 
 				/* closes form and broadcasts event for correct answer */
@@ -169,6 +175,7 @@ angular.module("plantApp")
 				/* Update the user info if the answer is correct*/
 				updateScore();
 
+				/* Change back the dimmer and update info */
 				setTimeout(function(){
 					$(".ui.dimmer").css("background-color", "rgba(25,25,25,0.9)");
 					$scope.answerCorrect = false;
@@ -191,6 +198,7 @@ angular.module("plantApp")
 		}
 	}
 
+	/* The function checks if the user's answer matches the expected answer */
 	function checkanswer(answer, solution){
 		/* convert answer/solution string into valid js math expressions */
 		solution =solution.replace(/\)\(/g,")*(");
