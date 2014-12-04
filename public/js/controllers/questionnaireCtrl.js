@@ -156,8 +156,14 @@ angular.module("plantApp")
 			}
 
 			/* check answer value for calculation and word problems */
+			else if ($scope.type==2)
+				try{
+					result=(eval(solution) == eval(answer));
+				}catch(e){
+					result=false;
+				}
 			else
-				result=(eval(solution) == eval(answer));
+				result=solution==answer;
 
 			if(result){
 				$scope.reply="Correct";
@@ -171,6 +177,7 @@ angular.module("plantApp")
 
 				/* closes form and broadcasts event for correct answer */
 				answerservice.sendrightanswerevent();
+				answerservice.sendactionevent($scope.type);
 
 				/* Update the user info if the answer is correct*/
 				updateScore();

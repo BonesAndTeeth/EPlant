@@ -15,11 +15,11 @@ position: absolute;
 	height: 90% !important;
 }
 .ui.vertical.menu .item {
-	padding: 6px !important;
+	padding: 3px !important;
 	/*height: 22% !important;*/
 }
 .table.settree{
-	margin: 10px auto 10px auto ;
+	margin: 5px auto 5px auto ;
 }
 .leafimg {
     -webkit-transform: rotate(180deg);
